@@ -4,6 +4,8 @@
 
 Drupal 8 Module that provides a View used by [Islandora Workbench](https://github.com/mjordan/islandora_workbench). This view provides a REST endpoint listing all the terms in a vocabulary.
 
+Note that this module is not currently required to use Islandora Workbench.
+
 ## Requirements
 
 * [Islandora 8](https://github.com/Islandora-CLAW/islandora)
