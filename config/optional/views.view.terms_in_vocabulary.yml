@@ -1,3 +1,4 @@
+uuid: e3faf974-f91a-4348-843f-2db818cc8784
 langcode: en
 status: true
 dependencies:
@@ -11,6 +12,8 @@ dependencies:
     - serialization
     - taxonomy
     - user
+_core:
+  default_config_hash: JuvepEvpsjWgndLnvmEyZClQs5qAR4V6ZDyAqo_r0gQ
 id: terms_in_vocabulary
 label: 'Terms in vocabulary'
 module: views
@@ -18,7 +21,6 @@ description: 'REST output of all the terms in a vocabulary, from a URL like http
 tag: ''
 base_table: taxonomy_term_field_data
 base_field: tid
-core: 8.x
 display:
   default:
     display_plugin: default
@@ -29,7 +31,7 @@ display:
       access:
         type: perm
         options:
-          perm: 'access content'
+          perm: 'administer taxonomy'
       cache:
         type: tag
         options: {  }
@@ -137,17 +139,9 @@ display:
           admin_label: ''
           operator: in
           value:
-            all: all
-            corporate_body: corporate_body
-            family: family
-            geo_location: geo_location
-            islandora_access: islandora_access
             islandora_display: islandora_display
             islandora_media_use: islandora_media_use
             islandora_models: islandora_models
-            person: person
-            resource_types: resource_types
-            subject: subject
             tags: tags
           group: 1
           exposed: true
@@ -157,6 +151,8 @@ display:
             description: ''
             use_operator: false
             operator: vid_op
+            operator_limit_selection: false
+            operator_list: {  }
             identifier: vid
             required: false
             remember: false
@@ -208,9 +204,8 @@ display:
       display_extenders: {  }
       path: vocabulary
       pager:
-        type: some
+        type: none
         options:
-          items_per_page: 10
           offset: 0
       style:
         type: serializer

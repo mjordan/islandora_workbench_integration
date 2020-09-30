@@ -4,7 +4,7 @@
 
 Drupal 8 Module that provides a View used by [Islandora Workbench](https://github.com/mjordan/islandora_workbench). This view provides a REST endpoint listing all the terms in a vocabulary.
 
-Note that this module is not currently required to use Islandora Workbench.
+Note that this module is not currently required to use Islandora Workbench, but if you want to use Islandora Workbench to validate the existence of taxonomy term IDs/names used in your input CSV, you do need to install this module.
 
 ## Requirements
 
@@ -25,6 +25,11 @@ By default, the following vocabularies are registered in the view:
 * tags
 
 To add new vocabularies, add them to the filter in the View.
+
+## Permissions
+
+By default, only users with the "Administer vocabularies and terms" permission can access the View. You should not relax the permission on this View since it returns large amounts of data, which can have an impact on your site's performance if the View is queried by anonymous users.
+
 
 ## Usage
 
