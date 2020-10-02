@@ -17,14 +17,7 @@ Note that this module is not currently required to use Islandora Workbench, but 
 
 ## Configuration
 
-By default, the following vocabularies are registered in the view:
-
-* islandora_display
-* islandora_media_use
-* islandora_models
-* tags
-
-To add new vocabularies, add them to the filter in the View.
+By default, all vocabularies are registered in the view. To prevent vocabularies from being updated by Workbench, remove them using the View's "Taxonomy term: Vocabulary" filter.
 
 ## Permissions
 
