@@ -1,18 +1,13 @@
 langcode: en
 status: true
 dependencies:
-  config:
-    - taxonomy.vocabulary.islandora_display
-    - taxonomy.vocabulary.islandora_media_use
-    - taxonomy.vocabulary.islandora_models
-    - taxonomy.vocabulary.tags
   module:
     - rest
     - serialization
     - taxonomy
     - user
 _core:
-  default_config_hash: JuvepEvpsjWgndLnvmEyZClQs5qAR4V6ZDyAqo_r0gQ
+  default_config_hash: lt2gciwTGXCiM2Oj_HEeJOgXOELzBWUefBMbOIvgY1A
 id: terms_in_vocabulary
 label: 'Terms in vocabulary'
 module: views
@@ -122,12 +117,8 @@ display:
           relationship: none
           group_type: group
           admin_label: ''
-          operator: in
-          value:
-            islandora_display: islandora_display
-            islandora_media_use: islandora_media_use
-            islandora_models: islandora_models
-            tags: tags
+          operator: 'not in'
+          value: {  }
           group: 1
           exposed: true
           expose:
@@ -177,7 +168,6 @@ display:
         - 'languages:language_interface'
         - request_format
         - url
-        - url.query_args
         - user.permissions
       tags: {  }
   rest_export_1:
