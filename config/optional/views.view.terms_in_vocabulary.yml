@@ -11,7 +11,7 @@ _core:
 id: terms_in_vocabulary
 label: 'Terms in vocabulary'
 module: views
-description: 'REST output of all the terms in a vocabulary, from a URL like http://localhost:8000/vocabulary?_format=json&vid=vocab_id.'
+description: 'REST output of all the terms in a vocabulary, from a URL like http://localhost:8000/vocabulary/{vid}?_format=json.'
 tag: ''
 base_table: taxonomy_term_field_data
 base_field: tid
