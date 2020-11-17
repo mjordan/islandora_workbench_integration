@@ -2,7 +2,7 @@
 
 ## Introduction
 
-Drupal 8 Module required by [Islandora Workbench](https://github.com/mjordan/islandora_workbench). Enables the "Terms in Vocabulary" View, and also enables the Field, Field Storage, and Entity Form Display REST resources.
+Drupal 8 Module required by [Islandora Workbench](https://github.com/mjordan/islandora_workbench). Enables the "Terms in Vocabulary" View, and also enables the Field, Field Storage, Entity Form Display, and User REST resources.
 
 ## Requirements
 
