@@ -2,7 +2,12 @@
 
 ## Introduction
 
-Drupal 8 Module required by [Islandora Workbench](https://github.com/mjordan/islandora_workbench). Enables the "Terms in Vocabulary" View, and the following REST resources used by Islandora Workbench:
+Drupal 8 Module required by [Islandora Workbench](https://github.com/mjordan/islandora_workbench). Enables the following Views:
+
+* Terms in vocabulary
+* Term from URI
+
+Also enables the following REST resources:
 
 * Field
 * Field Storage
