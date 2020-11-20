@@ -1,15 +1,13 @@
 langcode: en
 status: true
 dependencies:
-  config:
-    - user.role.administrator
   module:
     - rest
     - serialization
     - taxonomy
     - user
 _core:
-  default_config_hash: W7dt4yLZphX-PowQvmS-uKqV-rbzedvgnr3juMDkQS4
+  default_config_hash: FrPzdjsY8WuM8KQTcUZHrUAnPS7XLma-tpLvt9TRW9Y
 id: term_from_uri
 label: 'Term from URI'
 module: views
@@ -25,10 +23,9 @@ display:
     position: 0
     display_options:
       access:
-        type: role
+        type: perm
         options:
-          role:
-            administrator: administrator
+          perm: 'administer taxonomy'
       cache:
         type: tag
         options: {  }
@@ -196,7 +193,7 @@ display:
         - request_format
         - url
         - url.query_args
-        - user.roles
+        - user.permissions
       tags: {  }
   rest_export_1:
     display_plugin: rest_export
@@ -228,5 +225,5 @@ display:
         - 'languages:language_interface'
         - request_format
         - url
-        - user.roles
+        - user.permissions
       tags: {  }

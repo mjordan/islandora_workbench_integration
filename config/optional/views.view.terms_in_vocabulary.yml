@@ -7,11 +7,11 @@ dependencies:
     - taxonomy
     - user
 _core:
-  default_config_hash: gylxC6cLjvW8_wkP5KU0xtPF6L5JG6w4xWDPL-jn4dg
+  default_config_hash: VsiFmwoDwjycnRoRNSgbVeiFv8tLOMdcNPjlg3kDU0o
 id: terms_in_vocabulary
 label: 'Terms in vocabulary'
 module: views
-description: 'REST output of all the terms in a vocabulary, from a URL like http://localhost:8000/vocabulary/{vid}?_format=json. Used by Islandora Workbench.'
+description: 'REST output of all the terms in a vocabulary, from a request like http://localhost:8000/vocabulary/{vid}?_format=json. Used by Islandora Workbench.'
 tag: ''
 base_table: taxonomy_term_field_data
 base_field: tid

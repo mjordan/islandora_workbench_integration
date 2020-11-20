@@ -30,11 +30,11 @@ There is no user interface to this module. It only installs configuration that i
 
 ## Configuration
 
-By default, all vocabularies are registered in the view. To prevent vocabularies from being updated by Workbench, remove them using the View's "Taxonomy term: Vocabulary" filter.
+By default, all vocabularies are registered in the views. To prevent vocabularies from being updated by Workbench, remove them from the "Termis in vocabulary" View using its "Taxonomy term: Vocabulary" filter.
 
 ## Permissions
 
-By default, only users with the "Administer vocabularies and terms" permission can access the View. You should not relax the permission on this View since it returns large amounts of data, which can have an impact on your site's performance if the View is queried by anonymous users.
+By default, only users with the "Administer vocabularies and terms" permission can access the "Terms in vocabulary" View. You should not relax the permission on this View since it returns large amounts of data, which can have an impact on your site's performance if the View is queried by anonymous users.
 
 ## Current maintainer
 
