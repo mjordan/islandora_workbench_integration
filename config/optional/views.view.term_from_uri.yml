@@ -11,7 +11,7 @@ _core:
 id: term_from_uri
 label: 'Term from URI'
 module: views
-description: 'REST output of a term, from a reqeust like http://localhost:8000/term_from_uri?_format=json&uri=http://pcdm.org/use%23ThumbnailImage. Used by Islandora Workbench.'
+description: 'REST output of a term, from a request like /term_from_uri?_format=json&uri=http://pcdm.org/use%23ThumbnailImage or "/term_from_authority_link?_format=json&authority_link=http://1234.org". Used by Islandora Workbench.'
 tag: ''
 base_table: taxonomy_term_field_data
 base_field: tid
@@ -198,7 +198,7 @@ display:
   rest_export_1:
     display_plugin: rest_export
     id: rest_export_1
-    display_title: 'REST export'
+    display_title: 'REST export (external URI)'
     position: 1
     display_options:
       display_extenders: {  }
@@ -218,6 +218,128 @@ display:
         options: {  }
       auth:
         - basic_auth
+      arguments:
+        field_external_uri_uri:
+          id: field_external_uri_uri
+          table: taxonomy_term__field_external_uri
+          field: field_external_uri_uri
+          relationship: none
+          group_type: group
+          admin_label: ''
+          default_action: default
+          exception:
+            value: all
+            title_enable: false
+            title: All
+          title_enable: false
+          title: ''
+          default_argument_type: query_parameter
+          default_argument_options:
+            query_param: uri
+            fallback: ''
+            multiple: and
+          default_argument_skip_url: false
+          summary_options:
+            base_path: ''
+            count: true
+            items_per_page: 25
+            override: false
+          summary:
+            sort_order: asc
+            number_of_records: 0
+            format: default_summary
+          specify_validation: false
+          validate:
+            type: none
+            fail: 'not found'
+          validate_options: {  }
+          glossary: false
+          limit: 0
+          case: none
+          path_case: none
+          transform_dash: false
+          break_phrase: false
+          plugin_id: string
+      defaults:
+        arguments: false
+      display_description: ''
+    cache_metadata:
+      max-age: -1
+      contexts:
+        - 'languages:language_content'
+        - 'languages:language_interface'
+        - request_format
+        - url
+        - user.permissions
+      tags: {  }
+  rest_export_2:
+    display_plugin: rest_export
+    id: rest_export_2
+    display_title: 'REST export (authority link)'
+    position: 1
+    display_options:
+      display_extenders: {  }
+      path: term_from_authority_link
+      pager:
+        type: none
+        options:
+          offset: 0
+      style:
+        type: serializer
+        options:
+          uses_fields: false
+          formats:
+            json: json
+      row:
+        type: data_entity
+        options: {  }
+      auth:
+        - basic_auth
+      arguments:
+        field_authority_link_uri:
+          id: field_authority_link_uri
+          table: taxonomy_term__field_authority_link
+          field: field_authority_link_uri
+          relationship: none
+          group_type: group
+          admin_label: ''
+          default_action: default
+          exception:
+            value: all
+            title_enable: false
+            title: All
+          title_enable: false
+          title: ''
+          default_argument_type: query_parameter
+          default_argument_options:
+            query_param: authority_link
+            fallback: ''
+            multiple: and
+          default_argument_skip_url: false
+          summary_options:
+            base_path: ''
+            count: true
+            items_per_page: 25
+            override: false
+          summary:
+            sort_order: asc
+            number_of_records: 0
+            format: default_summary
+          specify_validation: false
+          validate:
+            type: none
+            fail: 'not found'
+          validate_options: {  }
+          glossary: false
+          limit: 0
+          case: none
+          path_case: none
+          transform_dash: false
+          break_phrase: false
+          plugin_id: string
+      defaults:
+        arguments: false
+      display_description: ''
     cache_metadata:
       max-age: -1
       contexts:
