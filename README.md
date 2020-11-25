@@ -36,7 +36,7 @@ By default, all vocabularies are registered in the views. To prevent vocabularie
 
 ## Permissions
 
-By default, only users with the "Administer vocabularies and terms" permission can access the "Terms in vocabulary" and "Term from URI" Views. You should not relax the permission on this View since they return large amounts of data, which can have an impact on your site's performance if the View is queried by anonymous users.
+By default, only users with the "Administer vocabularies and terms" permission can access the "Terms in vocabulary" and "Term from URI" Views. You should not relax the permission on this Views since they return large amounts of data, which can have an impact on your site's performance if the Views are queried by anonymous users.
 
 ## Current maintainer
 
