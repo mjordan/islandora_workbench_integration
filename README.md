@@ -15,6 +15,8 @@ Also enables the following REST resources:
 * User
 * URL alias
 
+Also provides an endpoint for exposing the maximum file size that can be uploaded. Access to this endpoint requires the 'administer site configuration' permission.
+
 ## Usage
 
 There is no user interface to this module. It only installs configuration that is required by Islandora Workbench.
