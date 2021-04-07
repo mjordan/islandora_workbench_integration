@@ -15,7 +15,12 @@ Also enables the following REST resources:
 * User
 * URL alias
 
-Also provides an endpoint for exposing the maximum file size that can be uploaded. Access to this endpoint requires the 'administer site configuration' permission.
+Also provides endpoints for exposing:
+
+* the maximum file size that can be uploaded
+* Drupal's version number
+
+Access to both of these endpoints requires the 'administer site configuration' permission.
 
 ## Usage
 

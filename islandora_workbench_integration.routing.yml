@@ -6,3 +6,12 @@ islandora_workbench_integration.max_file_size:
     _permission: 'administer site configuration'
   options:
     _auth: ['basic_auth']
+
+islandora_workbench_integration.core_version:
+  path: '/islandora_workbench_integration/core_version'
+  defaults:
+    _controller: '\Drupal\islandora_workbench_integration\Controller\IslandoraWorkbenchIntegrationCoreVersionController::main'
+  requirements:
+    _permission: 'administer site configuration'
+  options:
+    _auth: ['basic_auth']
