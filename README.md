@@ -15,7 +15,7 @@ Also enables the following REST resources:
 * User
 * URL alias
 
-It also enables JSON:API with create, read, update, and delete operations enabled.
+It also enables the JSON:API module.
 
 Also provides endpoints for exposing:
 
@@ -40,6 +40,8 @@ There is no user interface to this module. It only installs configuration that i
 ## Configuration
 
 By default, all vocabularies are registered in the views. To prevent vocabularies from being updated by Workbench, remove them from the "Terms in vocabulary" View using its "Taxonomy term: Vocabulary" filter.
+
+You must enable JSON:API's create, read, update, and delete operations manuall. To do so, visit `admin/config/services/jsonapi` and select "Accept all JSON:API create, read, update, and delete operations."
 
 ## Permissions
 
