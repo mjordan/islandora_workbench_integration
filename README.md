@@ -15,6 +15,8 @@ Also enables the following REST resources:
 * User
 * URL alias
 
+It also enables JSON:API with create, read, update, and delete operations enabled.
+
 Also provides endpoints for exposing:
 
 * the maximum file size that can be uploaded
@@ -37,11 +39,13 @@ There is no user interface to this module. It only installs configuration that i
 
 ## Configuration
 
-By default, all vocabularies are registered in the views. To prevent vocabularies from being updated by Workbench, remove them from the "Termis in vocabulary" View using its "Taxonomy term: Vocabulary" filter.
+By default, all vocabularies are registered in the views. To prevent vocabularies from being updated by Workbench, remove them from the "Terms in vocabulary" View using its "Taxonomy term: Vocabulary" filter.
 
 ## Permissions
 
 By default, only users with the "Administer vocabularies and terms" permission can access the "Terms in vocabulary" and "Term from URI" Views. You should not relax the permission on this Views since they return large amounts of data, which can have an impact on your site's performance if the Views are queried by anonymous users.
+
+All other REST endpoints, including those provided by JSON:API, require the use of Basic Authentication. 
 
 ## Current maintainer
 
