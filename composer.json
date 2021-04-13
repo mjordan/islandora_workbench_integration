@@ -1,0 +1,20 @@
+{
+  "name": "mjordan/islandora_workbench_integration",
+  "description": "Islandora Workbench Integration",
+  "type": "drupal-module",
+  "minimum-stability": "dev",
+  "prefer-stable": true,
+  "keywords": ["Drupal", "Islandora"],
+  "license": "GPL-2.0+",
+  "homepage": "https://github.com/mjordan/islandora_workbench_integration",
+  "support": {
+    "issues": "https://github.com/mjordan/islandora_workbench_integration/issues"
+  },
+  "authors": [
+    {
+      "name": "Mark Jordan",
+      "email": "mjordan@sfu.ca",
+      "role": "Maintainer"
+    }
+  ]
+}
