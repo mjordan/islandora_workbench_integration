@@ -40,11 +40,17 @@ There is no user interface to this module. It only installs configuration that i
 
 By default, all vocabularies are registered in the views. To prevent vocabularies from being updated by Workbench, remove them from the "Terms in vocabulary" View using its "Taxonomy term: Vocabulary" filter.
 
+## Updates
+
+Since this module enables a number of REST endpoints, you may need to reimport the configuration if a new endpoint is added. For example, after pulling in updates from Github, you should run the following `drush` command from within the `/var/www/html/drupal/web` directory:
+
+`drush cim -y --partial --source=modules/contrib/islandora_workbench_integration/config/optional`
+
 ## Permissions
 
 By default, only users with the "Administer vocabularies and terms" permission can access the "Terms in vocabulary" and "Term from URI" Views. You should not relax the permission on this Views since they return large amounts of data, which can have an impact on your site's performance if the Views are queried by anonymous users.
 
-All other REST endpoints require the use of Basic Authentication. 
+All other REST endpoints require the use of Basic Authentication. The username/password combination used in your Islandora Workbench configuration files needs to have this permission, as well as "Create new content" and "Create new media" for your Islandora content/media types.
 
 ## Current maintainer
 
