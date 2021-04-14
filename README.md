@@ -48,7 +48,7 @@ Since this module enables a number of REST endpoints, you may need to reimport t
 
 ## Permissions
 
-By default, only users with the "Administer vocabularies and terms" permission can access the "Terms in vocabulary" and "Term from URI" Views. You should not relax the permission on this Views since they return large amounts of data, which can have an impact on your site's performance if the Views are queried by anonymous users.
+By default, only users with the "Administer vocabularies and terms" permission can access the "Terms in vocabulary" and "Term from URI" Views. You should not relax the permission on these Views since they return large amounts of data, which can have an impact on your site's performance if the Views are queried by anonymous users.
 
 All other REST endpoints require the use of Basic Authentication. The username/password combination used in your Islandora Workbench configuration files needs to have this permission, as well as "Create new content" and "Create new media" for your Islandora content/media types.
 
