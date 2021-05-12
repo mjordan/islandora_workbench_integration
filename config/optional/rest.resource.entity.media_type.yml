@@ -1,0 +1,17 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - basic_auth
+    - media
+    - serialization
+id: entity.media_type
+plugin_id: 'entity:media_type'
+granularity: resource
+configuration:
+  methods:
+    - GET
+  formats:
+    - json
+  authentication:
+    - basic_auth

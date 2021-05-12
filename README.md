@@ -14,7 +14,8 @@ Also enables the following REST resources:
 * Entity Form Display
 * User
 * URL alias
-* File Upload
+* File upload
+* Media type
 
 Also provides endpoints for exposing:
 
