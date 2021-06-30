@@ -34,7 +34,9 @@ There is no user interface to this module. It only installs configuration that i
 
 ## Installation
 
-1. Clone this Github repo into your Islandora's `drupal/web/modules/contrib` directory.
+You can install this module using Composer. Within your Drupal root folder, run the following:
+
+1. `composer require mjordan/islandora_workbench_integration "dev-main"`
 1. Enable the module either under the "Admin > Extend" menu or by running `drush en -y islandora_workbench_integration`.
 
 ## Configuration
