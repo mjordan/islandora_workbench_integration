@@ -39,6 +39,11 @@ You can install this module using Composer. Within your Drupal root folder, run 
 1. `composer require mjordan/islandora_workbench_integration "dev-main"`
 1. Enable the module either under the "Admin > Extend" menu or by running `drush en -y islandora_workbench_integration`.
 
+If you're deploying Islandora via ISLE, install and enable this module using these two commands:
+
+1. `docker-compose exec -T drupal with-contenv bash -lc "composer require mjordan/islandora_workbench_integration "dev-main""`
+2. `docker-compose exec -T drupal with-contenv bash -lc "drush en -y islandora_workbench_integration"`
+
 ## Configuration
 
 By default, all vocabularies are registered in the views. To prevent vocabularies from being updated by Workbench, remove them from the "Terms in vocabulary" View using its "Taxonomy term: Vocabulary" filter.
