@@ -41,7 +41,7 @@ You can install this module using Composer. Within your Drupal root folder, run 
 
 If you're deploying Islandora via ISLE, install and enable this module using these two commands:
 
-1. `docker-compose exec -T drupal with-contenv bash -lc "composer require mjordan/islandora_workbench_integration "dev-main""`
+1. `docker-compose exec -T drupal with-contenv bash -lc "composer require mjordan/islandora_workbench_integration"`
 2. `docker-compose exec -T drupal with-contenv bash -lc "drush en -y islandora_workbench_integration"`
 
 ## Configuration
