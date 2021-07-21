@@ -15,3 +15,12 @@ islandora_workbench_integration.core_version:
     _permission: 'administer site configuration'
   options:
     _auth: ['basic_auth']
+
+islandora_workbench_integration.file_hash:
+  path: '/islandora_workbench_integration/file_hash'
+  defaults:
+    _controller: '\Drupal\islandora_workbench_integration\Controller\IslandoraWorkbenchIntegrationGetHashController::main'
+  requirements:
+    _permission: 'administer site configuration'
+  options:
+    _auth: ['basic_auth']
