@@ -21,6 +21,7 @@ Also provides endpoints for exposing:
 
 * the maximum file size that can be uploaded
 * Drupal's version number
+* file hash/checksum
 
 Access to both of these endpoints requires the 'administer site configuration' permission.
 
