@@ -24,7 +24,7 @@ class IslandoraWorkbenchIntegrationGetHashController extends ControllerBase {
     $file_uuid = \Drupal::request()->query->get('file_uuid');
     $algorithm = \Drupal::request()->query->get('algorithm');
 
-    if (is_null($file_uri) || is_null($algorithm)) {
+    if (is_null($file_uuid) || is_null($algorithm)) {
       return new JsonResponse(['error' => 'Request is missing either the "file_uuid" or "algorithm" parameter.']);
     }
     if (!in_array($algorithm, ['md5', 'sha1', 'sha256'])) {
