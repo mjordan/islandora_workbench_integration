@@ -6,6 +6,7 @@ Drupal 8/9 Module required by [Islandora Workbench](https://github.com/mjordan/i
 
 * Terms in vocabulary
 * Term from URI
+* Term from term name
 
 Also enables the following REST resources:
 
