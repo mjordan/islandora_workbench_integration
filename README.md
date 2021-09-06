@@ -17,6 +17,7 @@ Also enables the following REST resources:
 * URL alias
 * File upload
 * Media type
+* Taxonomy Vocabulary
 
 Also provides endpoints for exposing:
 
