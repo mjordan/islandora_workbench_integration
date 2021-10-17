@@ -21,11 +21,10 @@ Also enables the following REST resources:
 
 Also provides endpoints for exposing:
 
+* Drupal core's version number
 * the maximum file size that can be uploaded
-* Drupal's version number
+* this module's version number
 * file hash/checksum
-
-Access to both of these endpoints requires the 'administer site configuration' permission.
 
 ## Usage
 
@@ -56,12 +55,11 @@ By default, all vocabularies are registered in the views. To prevent vocabularie
 Since this module enables a number of REST endpoints, you may need to reimport the configuration if a new endpoint is added. For example, after pulling in updates from Github, you should run the following `drush` command from within the `/var/www/html/drupal/web` directory:
 
 `drush cim -y --partial --source=modules/contrib/islandora_workbench_integration/config/optional`
+`drush cr`
 
 ## Permissions
 
-By default, only users with the "Administer vocabularies and terms" permission can access the "Terms in vocabulary" and "Term from URI" Views. You should not relax the permission on these Views since they return large amounts of data, which can have an impact on your site's performance if the Views are queried by anonymous users.
-
-All other REST endpoints require the use of Basic Authentication. The username/password combination used in your Islandora Workbench configuration files needs to have this permission, as well as "Create new content" and "Create new media" for your Islandora content/media types.
+All REST endpoints added or endabled by this module require the use of Basic Authentication. The username/password combination used in your Islandora Workbench configuration files should be a member of the "Administrator" role.
 
 ## Current maintainer
 
