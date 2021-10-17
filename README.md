@@ -24,7 +24,7 @@ Also provides endpoints for exposing:
 * Drupal core's version number
 * the maximum file size that can be uploaded
 * this module's version number
-* file hash/checksum
+* a given file's checksum
 
 ## Usage
 
@@ -52,10 +52,15 @@ By default, all vocabularies are registered in the views. To prevent vocabularie
 
 ## Updates
 
-Since this module enables a number of REST endpoints, you may need to reimport the configuration if a new endpoint is added. For example, after pulling in updates from Github, you should run the following `drush` command from within the `/var/www/html/drupal/web` directory:
+Since this module enables a number of REST endpoints, you may need to reimport the configuration if a new endpoint is added. For example, after pulling in updates from Github, you should run the following `drush` commands from within the `/var/www/html/drupal/web` directory:
 
-`drush cim -y --partial --source=modules/contrib/islandora_workbench_integration/config/optional`
-`drush cr`
+1. `drush cim -y --partial --source=modules/contrib/islandora_workbench_integration/config/optional`
+1. `drush cr`
+
+Or, if you are using ISLE:
+
+1. `docker-compose exec -T drupal with-contenv bash -lc "drush cim -y --partial --source=modules/contrib/islandora_workbench_integration/config/optional"`
+1. `docker-compose exec -T drupal with-contenv bash -lc "drush cr"`
 
 ## Permissions
 
