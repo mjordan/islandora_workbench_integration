@@ -4,7 +4,7 @@
 
 Drupal 8/9 Module required by [Islandora Workbench](https://github.com/mjordan/islandora_workbench). Enables the following Views:
 
-* Terms in vocabulary
+* Terms in vocabulary (deprecated, see "Updates" below)
 * Term from URI
 * Term from term name
 
@@ -61,6 +61,8 @@ Or, if you are using ISLE:
 
 1. `docker-compose exec -T drupal with-contenv bash -lc "drush cim -y --partial --source=modules/contrib/islandora_workbench_integration/config/optional"`
 1. `docker-compose exec -T drupal with-contenv bash -lc "drush cr"`
+
+Note that as of the 1.0.0 release, the "Terms in vocabulary" View is no longer used by Workbench. Unless you are using this View for some other purpose, you can disable/delete it from your Drupal. See [this isue](https://github.com/mjordan/islandora_workbench_integration/issues/20) for more information.
 
 ## Permissions
 
