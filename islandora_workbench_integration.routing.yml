@@ -1,7 +1,7 @@
-islandora_workbench_integration.max_file_size:
-  path: '/islandora_workbench_integration/upload_max_filesize'
+islandora_workbench_integration.system_info:
+  path: '/islandora_workbench_integration/system_info'
   defaults:
-    _controller: '\Drupal\islandora_workbench_integration\Controller\IslandoraWorkbenchIntegrationMaxFileSizeController::main'
+    _controller: '\Drupal\islandora_workbench_integration\Controller\IslandoraWorkbenchIntegrationSystemInfoController::main'
   requirements:
     _permission: 'administer site configuration'
   options:
