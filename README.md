@@ -2,7 +2,7 @@
 
 ## Introduction
 
-Drupal 8/9 Module required by [Islandora Workbench](https://github.com/mjordan/islandora_workbench). Enables the following Views:
+Drupal 9/10 Module required by [Islandora Workbench](https://github.com/mjordan/islandora_workbench). Enables the following Views:
 
 * Term from URI
 * Term from term name
@@ -31,7 +31,7 @@ There is no user interface to this module. It only installs configuration that i
 
 ## Requirements
 
-* [Islandora 8 or 9](https://github.com/Islandora/islandora)
+* [Islandora Modern](https://github.com/Islandora/islandora)
 
 ## Installation
 
