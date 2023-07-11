@@ -1,0 +1,20 @@
+<?php
+use Drupal\Core\Entity\EntityInterface;
+
+/**
+ * Implements hook_ENTITY_TYPE_presave() for node entities.
+ */
+function islandora_workbench_integration_node_presave(EntityInterface $node) {
+  // Get the content type of the node.
+  $content_type = NodeType::load($node->bundle());
+
+  // Check if the content type exists and if the "Create new revision" option is enabled.
+  if ($content_type && $content_type->shouldCreateNewRevision()) {
+    // The "Create new revision" option is enabled.
+    $node->setNewRevision(TRUE);
+  }
+  else {
+    // The "Create new revision" option is disabled.
+    $node->setNewRevision(FALSE);
+  }
+}
