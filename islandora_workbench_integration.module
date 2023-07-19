@@ -15,6 +15,7 @@ function islandora_workbench_integration_node_presave(EntityInterface $node) {
   if ($content_type && $content_type->shouldCreateNewRevision()) {
     // The "Create new revision" option is enabled.
     $node->setNewRevision(TRUE);
+    $node->setRevisionCreationTime(REQUEST_TIME);
   }
   else {
     // The "Create new revision" option is disabled.
