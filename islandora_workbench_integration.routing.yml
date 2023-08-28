@@ -1,12 +1,3 @@
-islandora_workbench_integration.system_info:
-  path: '/islandora_workbench_integration/system_info'
-  defaults:
-    _controller: '\Drupal\islandora_workbench_integration\Controller\IslandoraWorkbenchIntegrationSystemInfoController::main'
-  requirements:
-    _permission: 'administer site configuration'
-  options:
-    _auth: ['basic_auth']
-
 islandora_workbench_integration.core_version:
   path: '/islandora_workbench_integration/core_version'
   defaults:
