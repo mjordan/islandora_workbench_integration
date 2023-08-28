@@ -13,7 +13,7 @@ class IslandoraWorkbenchIntegrationVersionController extends ControllerBase {
    * @return JsonResponse object
    */
    public function main() {
-     return new JsonResponse(['integration_module_version' => '1.1.0']);
+     return new JsonResponse(['integration_module_version' => '1.0.0']);
    }
 
 }
