@@ -1,8 +1,15 @@
 <?php
+
+/**
+ * @file
+ * Contains islandora_workbench_integration.module.
+ *
+ * This module adds views and REST interfaces for Islandora Workbench.
+ */
+
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\node\Entity\NodeType;
 use Drupal\media\Entity\MediaType;
-
 
 /**
  * Implements hook_ENTITY_TYPE_presave() for node entities.
@@ -11,18 +18,18 @@ function islandora_workbench_integration_node_presave(EntityInterface $node) {
   // Get the content type of the node.
   $content_type = NodeType::load($node->bundle());
 
-  // Check if the content type exists and if the "Create new revision" option is enabled.
+  // Check if the content type exists and if the "Create new revision"
+  // option is enabled.
   if ($content_type && $content_type->shouldCreateNewRevision()) {
     // The "Create new revision" option is enabled.
     $node->setNewRevision(TRUE);
-    $node->setRevisionCreationTime(REQUEST_TIME);
+    $node->setRevisionCreationTime(Drupal::time()->getRequestTime());
   }
   else {
     // The "Create new revision" option is disabled.
     $node->setNewRevision(FALSE);
   }
 }
-
 
 /**
  * Implements hook_ENTITY_TYPE_presave() for media entities.
@@ -34,7 +41,8 @@ function islandora_workbench_integration_media_presave(EntityInterface $media) {
   // Load the media type entity.
   $media_type = MediaType::load($bundle);
 
-  // Check if the media type exists and if the "Create new revision" option is enabled.
+  // Check if the media type exists and if the "Create new revision"
+  // option is enabled.
   if ($media_type && $media_type->shouldCreateNewRevision()) {
     // The "Create new revision" option is enabled.
     $media->setNewRevision(TRUE);
