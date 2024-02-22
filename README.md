@@ -22,7 +22,6 @@ Also enables the following REST resources:
 Also provides endpoints for exposing:
 
 * Drupal core's version number
-* the maximum file size that can be uploaded
 * this module's version number
 * a given file's checksum
 
