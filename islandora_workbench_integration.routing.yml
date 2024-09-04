@@ -5,7 +5,7 @@ islandora_workbench_integration.core_version:
   requirements:
     _permission: 'administer site configuration'
   options:
-    _auth: ['basic_auth']
+    _auth: ['basic_auth','jwt_auth','cookie']
 
 islandora_workbench_integration.version:
   path: '/islandora_workbench_integration/version'
@@ -14,7 +14,7 @@ islandora_workbench_integration.version:
   requirements:
     _permission: 'administer site configuration'
   options:
-    _auth: ['basic_auth']
+    _auth: ['basic_auth','jwt_auth','cookie']
 
 islandora_workbench_integration.file_hash:
   path: '/islandora_workbench_integration/file_hash'
@@ -23,4 +23,4 @@ islandora_workbench_integration.file_hash:
   requirements:
     _permission: 'administer site configuration'
   options:
-    _auth: ['basic_auth']
+    _auth: ['basic_auth','jwt_auth','cookie']
