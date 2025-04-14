@@ -6,15 +6,18 @@ use Drupal\Core\Controller\ControllerBase;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
-* Controller.
-*/
+ * Controller.
+ */
 class IslandoraWorkbenchIntegrationVersionController extends ControllerBase {
+
   /**
-   * @return JsonResponse object
+   * Return a JSON object specifying this module's version.
+   *
+   * @return \Symfony\Component\HttpFoundation\JsonResponse
+   *   object
    */
-   public function main() {
-     return new JsonResponse(['integration_module_version' => '1.0.0']);
-   }
+  public function main() {
+    return new JsonResponse(['integration_module_version' => '1.0.0']);
+  }
 
 }
-

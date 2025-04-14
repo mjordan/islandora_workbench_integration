@@ -17,8 +17,8 @@ class IslandoraWorkbenchIntegrationGetHashController extends ControllerBase {
    * 'algorithm', to get a file entity's checksum. 'algorithm'
    * is one of 'md5', 'sha1', or 'sha256'.
    *
-   * @return JsonResponse
-   *   A JSON response with the keys below. 
+   * @return \Symfony\Component\HttpFoundation\JsonResponse
+   *   A JSON response with the keys below.
    */
   public function main() {
     $file_uuid = \Drupal::request()->query->get('file_uuid');
