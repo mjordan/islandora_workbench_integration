@@ -35,6 +35,7 @@ class IslandoraWorkbenchIntegrationGetHashControllerTest extends BrowserTestBase
    */
   protected function setUp(): void {
     parent::setUp();
+    $this->drupalLogin($this->rootUser);
 
     // Create a small temporary file on disk.
     $file_system = \Drupal::service('file_system');
@@ -58,8 +59,6 @@ class IslandoraWorkbenchIntegrationGetHashControllerTest extends BrowserTestBase
    * Tests missing parameters.
    */
   public function testMissingParameters() {
-    $this->drupalLogin($this->rootUser);
-
     // No query parameters at all.
     $this->drupalGet('/islandora_workbench_integration/file_hash');
     $this->assertSession()->statusCodeEquals(200);
@@ -74,10 +73,13 @@ class IslandoraWorkbenchIntegrationGetHashControllerTest extends BrowserTestBase
    * Tests invalid algorithm parameter.
    */
   public function testInvalidAlgorithm() {
-    $this->drupalLogin($this->rootUser);
-
     $uuid = $this->testFile->uuid();
-    $this->drupalGet("/islandora_workbench_integration/file_hash?file_uuid={$uuid}&algorithm=foo");
+    $this->drupalGet('/islandora_workbench_integration/file_hash', [
+      'query' => [
+        'file_uuid' => $uuid,
+        'algorithm' => 'foo',
+      ],
+    ]);
     $this->assertSession()->statusCodeEquals(200);
     $data = json_decode($this->getSession()->getPage()->getContent(), TRUE);
     $this->assertEquals(
@@ -90,8 +92,6 @@ class IslandoraWorkbenchIntegrationGetHashControllerTest extends BrowserTestBase
    * Tests valid request returns correct checksum.
    */
   public function testValidChecksumResponse() {
-    $this->drupalLogin($this->rootUser);
-
     $uuid = $this->testFile->uuid();
 
     // Compute expected checksum for our test.txt with "hello world\n"
@@ -100,7 +100,12 @@ class IslandoraWorkbenchIntegrationGetHashControllerTest extends BrowserTestBase
     $public_path = \Drupal::service('file_system')->realpath($this->testFile->getFileUri());
     $expected = hash_file('md5', $public_path);
 
-    $this->drupalGet("/islandora_workbench_integration/file_hash?file_uuid={$uuid}&algorithm=md5");
+    $this->drupalGet('/islandora_workbench_integration/file_hash', [
+      'query' => [
+        'file_uuid' => $uuid,
+        'algorithm' => 'md5',
+      ],
+    ]);
     $this->assertSession()->statusCodeEquals(200);
 
     $data = json_decode($this->getSession()->getPage()->getContent(), TRUE);
