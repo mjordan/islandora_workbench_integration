@@ -1,0 +1,41 @@
+name: lint-test
+
+on:
+  push:
+    branches:
+      - "**"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lint-test:
+    name: lint+test
+    runs-on: ubuntu-24.04
+    strategy:
+      matrix:
+        php-version: ["8.1", "8.2", "8.3"]
+        drupal-version: ["10.3", "10.4", "11.0", "11.1"]
+        exclude:
+          - drupal-version: "11.0"
+            php-version: "8.1"
+          - drupal-version: "11.0"
+            php-version: "8.2"
+          - drupal-version: "11.1"
+            php-version: "8.1"
+          - drupal-version: "11.1"
+            php-version: "8.2"
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: lint+test
+        working-directory: tests
+        run: |
+          export MODULE_DIRECTORY=$(pwd | xargs dirname)
+          docker compose up --quiet-pull --abort-on-container-exit
+        env:
+          DRUPAL_VERSION: ${{ matrix.drupal-version }}
+          PHP_VERSION: ${{ matrix.php-version }}
+          ENABLE_MODULES: islandora_workbench_integration

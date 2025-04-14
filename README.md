@@ -2,7 +2,7 @@
 
 ## Introduction
 
-Drupal 9/10 Module required by [Islandora Workbench](https://github.com/mjordan/islandora_workbench). Enables the following Views:
+Drupal 10/11 Module required by [Islandora Workbench](https://github.com/mjordan/islandora_workbench). Enables the following Views:
 
 * Term from URI
 * Term from term name
@@ -61,11 +61,24 @@ Or, if you are using ISLE:
 1. `docker-compose exec -T drupal with-contenv bash -lc "drush cim -y --partial --source=modules/contrib/islandora_workbench_integration/config/optional"`
 1. `docker-compose exec -T drupal with-contenv bash -lc "drush cr"`
 
-Note that as of the 1.0.0 release, the "Terms in vocabulary" View is no longer used by Workbench. Unless you are using this View for some other purpose, as of version 1.0.0 you can disable/delete it from your Drupal. 
+Note that as of the 1.0.0 release, the "Terms in vocabulary" View is no longer used by Workbench. Unless you are using this View for some other purpose, as of version 1.0.0 you can disable/delete it from your Drupal.
 
 ## Permissions
 
 All REST endpoints added or endabled by this module require the use of Basic Authentication. The username/password combination used in your Islandora Workbench configuration files should be a member of the "Administrator" role.
+
+## Running tests locally
+
+A docker-compose.yml file is defined in [./tests](./tests) that can automatically lint and run phpunit tests for this module. These are how tests are ran [in GitHub Actions](./.github/workflows/lint-test.yml).
+
+```bash
+cd tests
+export MODULE_DIRECTORY=$(pwd | xargs dirname)
+export ENABLE_MODULES=islandora_workbench_integration
+export DRUPAL_VERSION=10.4
+export PHP_VERSION=8.3
+docker compose up --quiet-pull --abort-on-container-exit
+```
 
 ## Current maintainer
 
