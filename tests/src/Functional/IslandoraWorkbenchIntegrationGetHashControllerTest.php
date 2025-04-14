@@ -40,7 +40,8 @@ class IslandoraWorkbenchIntegrationGetHashControllerTest extends BrowserTestBase
 
     // Create a small temporary file on disk.
     $file_system = \Drupal::service('file_system');
-    $path = $this->root . '/sites/simpletest/files/test.txt';
+    $path = '/tmp/test.txt';
+    $dir = dirname($path);
     $file_system->prepareDirectory($dir, FileSystemInterface::CREATE_DIRECTORY);
     $file_system->saveData('hello world', $path, FileSystemInterface::EXISTS_REPLACE);
 
