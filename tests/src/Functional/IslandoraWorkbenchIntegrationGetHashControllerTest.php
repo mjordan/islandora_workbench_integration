@@ -2,6 +2,7 @@
 
 namespace Drupal\Tests\islandora_workbench_integration\Functional;
 
+use Drupal\Core\File\FileExists;
 use Drupal\Core\File\FileSystemInterface;
 use Drupal\Tests\BrowserTestBase;
 use Drupal\file\Entity\File;
@@ -42,7 +43,7 @@ class IslandoraWorkbenchIntegrationGetHashControllerTest extends BrowserTestBase
     $path = '/tmp/test.txt';
     $dir = dirname($path);
     $file_system->prepareDirectory($dir, FileSystemInterface::CREATE_DIRECTORY);
-    $file_system->saveData('hello world', $path, FileSystemInterface::EXISTS_REPLACE);
+    $file_system->saveData('hello world', $path, FileExists::Replace);
 
     // Create a Drupal file entity pointing to it.
     $this->testFile = File::create([
@@ -51,7 +52,7 @@ class IslandoraWorkbenchIntegrationGetHashControllerTest extends BrowserTestBase
       'status' => 0,
     ]);
     // Physically copy.
-    $file_system->copy($path, 'public://test.txt', FileSystemInterface::EXISTS_REPLACE);
+    $file_system->copy($path, 'public://test.txt', FileExists::Replace);
     $this->testFile->save();
   }
 
