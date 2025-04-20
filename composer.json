@@ -8,6 +8,9 @@
   "support": {
     "issues": "https://github.com/mjordan/islandora_workbench_integration/issues"
   },
+  "require": {
+    "drupal/islandora": "^2"
+  },
   "authors": [
     {
       "name": "Mark Jordan",

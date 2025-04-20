@@ -1,0 +1,22 @@
+networks:
+  default:
+services:
+  chromedriver:
+    image: drupalci/webdriver-chromedriver:production
+    entrypoint:
+      - chromedriver
+      - "--log-path=/dev/null"
+      - "--verbose"
+      - "--allowed-ips="
+      - "--allowed-origins=*"
+  drupal:
+    image: lehighlts/drupal-ci:${DRUPAL_VERSION}-php${PHP_VERSION}
+    volumes:
+      - ${MODULE_DIRECTORY}:/var/www/drupal/web/modules/contrib/${ENABLE_MODULES}
+    environment:
+      SIMPLETEST_BASE_URL: http://drupal:8282
+      ENABLE_MODULES: ${ENABLE_MODULES}
+      MINK_DRIVER_ARGS_WEBDRIVER: '["chrome", {"browserName":"chrome","goog:chromeOptions":{"args":["--disable-gpu","--headless", "--no-sandbox", "--disable-dev-shm-usage"]}}, "http://chromedriver:9515"]'
+      SYMFONY_DEPRECATIONS_HELPER: weak
+    links: 
+        - chromedriver

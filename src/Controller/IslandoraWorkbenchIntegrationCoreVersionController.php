@@ -6,15 +6,18 @@ use Drupal\Core\Controller\ControllerBase;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 /**
-* Controller.
-*/
+ * Controller.
+ */
 class IslandoraWorkbenchIntegrationCoreVersionController extends ControllerBase {
+
   /**
-   * @return JsonResponse object
+   * Return a JSON object specifying this site's Drupal version.
+   *
+   * @return \Symfony\Component\HttpFoundation\JsonResponse
+   *   object
    */
-   public function main() {
-     return new JsonResponse(['core_version' => \Drupal::VERSION]);
-   }
+  public function main() {
+    return new JsonResponse(['core_version' => \Drupal::VERSION]);
+  }
 
 }
-
