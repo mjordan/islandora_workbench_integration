@@ -10,6 +10,7 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\rest\ResourceResponse;
 use Drupal\Core\File\FileUrlGeneratorInterface;
+use Drupal\Core\Session\AccountInterface;
 
 /**
  * Provides a REST endpoint to register a server-side file as a managed file.
@@ -50,6 +51,13 @@ class ServerFileResource extends ResourceBase {
   protected FileRepositoryInterface $fileRepository;
 
   /**
+   * The account user interface.
+   *
+   * @var \Drupal\Core\Session\AccountInterface
+   */
+  protected AccountInterface $currentUser;
+
+  /**
    * Constructs a ServerFileResource object.
    *
    * @param array $configuration
@@ -66,6 +74,8 @@ class ServerFileResource extends ResourceBase {
    *   The file URL generator service.
    * @param \Drupal\file\FileRepositoryInterface $file_repository
    *   The file repository service.
+   * @param \Drupal\Core\Session\AccountInterface $current_user
+   *   The current user.
    */
   public function __construct(
     array $configuration,
@@ -74,11 +84,13 @@ class ServerFileResource extends ResourceBase {
     array $serializer_formats,
     $logger,
     FileUrlGeneratorInterface $file_url_generator,
-    FileRepositoryInterface $file_repository
+    FileRepositoryInterface $file_repository,
+    AccountInterface $current_user
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $serializer_formats, $logger);
     $this->fileUrlGenerator = $file_url_generator;
     $this->fileRepository = $file_repository;
+    $this->currentUser = $current_user;
   }
 
   /**
@@ -92,7 +104,8 @@ class ServerFileResource extends ResourceBase {
       $container->getParameter('serializer.formats'),
       $container->get('logger.factory')->get('server_file_rest'),
       $container->get('file_url_generator'),
-      $container->get('file.repository')
+      $container->get('file.repository'),
+      $container->get('current_user')
     );
   }
 
@@ -139,6 +152,7 @@ class ServerFileResource extends ResourceBase {
       $file = File::create([
         'uri' => $path,
         'status' => 1,
+        'uid' => $this->currentUser->id(),
       ]);
       $file->save();
     }
@@ -169,3 +183,4 @@ class ServerFileResource extends ResourceBase {
   }
 
 }
+
