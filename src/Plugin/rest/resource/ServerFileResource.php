@@ -17,11 +17,12 @@ use Drupal\Core\Session\AccountInterface;
  *
  * Example usage:
  * POST /api/server-file
- * Payload: { "path": "/full/path/to/file.txt", "retval": "contents" }
+ * Payload: { "path": "/path/to/file.txt", "retval": "contents", "checkfile }
  *
  * Supported retval options:
  *   - "contents": Return text contents of a .txt file.
  *   - "fid": Return the file entity ID.
+ *   - "checkfile": Returns whether file is found,
  *
  * This resource ensures the file is tracked by Drupal as a managed file,
  * and can optionally return file contents for .txt files.
@@ -85,7 +86,7 @@ class ServerFileResource extends ResourceBase {
     $logger,
     FileUrlGeneratorInterface $file_url_generator,
     FileRepositoryInterface $file_repository,
-    AccountInterface $current_user
+    AccountInterface $current_user,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $serializer_formats, $logger);
     $this->fileUrlGenerator = $file_url_generator;
@@ -135,12 +136,16 @@ class ServerFileResource extends ResourceBase {
    */
   public function post($data) {
     $payload = [];
+    $retval = $data['retval'] ?? '';
 
     if (empty($data['path'])) {
       throw new BadRequestHttpException('Missing file path');
     }
 
     $path = $data['path'];
+    if ($retval === 'checkfile') {
+      return new ResourceResponse(file_exists($path));
+    }
 
     if (!file_exists($path)) {
       throw new BadRequestHttpException("File does not exist at: $path");
@@ -156,8 +161,6 @@ class ServerFileResource extends ResourceBase {
       ]);
       $file->save();
     }
-
-    $retval = $data['retval'] ?? '';
 
     // Return contents of a .txt file if requested.
     if ($retval === 'contents') {
