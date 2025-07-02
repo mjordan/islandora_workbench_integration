@@ -162,12 +162,12 @@ class ServerFileResource extends ResourceBase {
     }
 
     if (!$managed_file) {
-      $file = File::create([
+      $managed_file = File::create([
         'uri' => $path,
         'status' => 1,
         'uid' => $this->currentUser->id(),
       ]);
-      $file->save();
+      $managed_file->save();
     }
 
     // Return contents of a .txt file if requested.
@@ -184,7 +184,7 @@ class ServerFileResource extends ResourceBase {
 
     // Return file ID if requested.
     if ($retval === 'fid') {
-      $payload['fid'] = $file->id();
+      $payload['fid'] = $managed_file->id();
     }
 
     return new ResourceResponse($payload);
