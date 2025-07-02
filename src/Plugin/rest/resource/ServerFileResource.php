@@ -4,24 +4,26 @@ namespace Drupal\islandora_workbench_integration\Plugin\rest\resource;
 
 use Drupal\file\Entity\File;
 use Drupal\file\FileRepositoryInterface;
-use Drupal\rest\Annotation\RestResource;
 use Drupal\rest\Plugin\ResourceBase;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\rest\ResourceResponse;
 use Drupal\Core\File\FileUrlGeneratorInterface;
 use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\Entity\EntityFieldManagerInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 
 /**
  * Provides a REST endpoint to register a server-side file as a managed file.
  *
  * Example usage:
  * POST /api/server-file
- * Payload: { "path": "/full/path/to/file.txt", "retval": "contents" }
+ * Payload: { "path": "/path/to/file.txt", "retval": "contents", "checkfile }
  *
  * Supported retval options:
  *   - "contents": Return text contents of a .txt file.
  *   - "fid": Return the file entity ID.
+ *   - "checkfile": Returns whether file is found,
  *
  * This resource ensures the file is tracked by Drupal as a managed file,
  * and can optionally return file contents for .txt files.
@@ -58,24 +60,21 @@ class ServerFileResource extends ResourceBase {
   protected AccountInterface $currentUser;
 
   /**
-   * Constructs a ServerFileResource object.
+   * The entity type manager.
    *
-   * @param array $configuration
-   *   A configuration array containing plugin instance information.
-   * @param string $plugin_id
-   *   The plugin ID for the plugin instance.
-   * @param mixed $plugin_definition
-   *   The plugin implementation definition.
-   * @param array $serializer_formats
-   *   The available serialization formats.
-   * @param \Psr\Log\LoggerInterface $logger
-   *   The logger service.
-   * @param \Drupal\Core\File\FileUrlGeneratorInterface $file_url_generator
-   *   The file URL generator service.
-   * @param \Drupal\file\FileRepositoryInterface $file_repository
-   *   The file repository service.
-   * @param \Drupal\Core\Session\AccountInterface $current_user
-   *   The current user.
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   */
+  protected $entityTypeManager;
+
+  /**
+   * The entity field manager.
+   *
+   * @var \Drupal\Core\Entity\EntityFieldManagerInterface
+   */
+  protected $entityFieldManager;
+
+  /**
+   * Constructs a ServerFileResource object.
    */
   public function __construct(
     array $configuration,
@@ -85,12 +84,16 @@ class ServerFileResource extends ResourceBase {
     $logger,
     FileUrlGeneratorInterface $file_url_generator,
     FileRepositoryInterface $file_repository,
-    AccountInterface $current_user
+    AccountInterface $current_user,
+    EntityTypeManagerInterface $entity_type_manager,
+    EntityFieldManagerInterface $entity_field_manager,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $serializer_formats, $logger);
     $this->fileUrlGenerator = $file_url_generator;
     $this->fileRepository = $file_repository;
     $this->currentUser = $current_user;
+    $this->entityTypeManager = $entity_type_manager;
+    $this->entityFieldManager = $entity_field_manager;
   }
 
   /**
@@ -105,7 +108,9 @@ class ServerFileResource extends ResourceBase {
       $container->get('logger.factory')->get('server_file_rest'),
       $container->get('file_url_generator'),
       $container->get('file.repository'),
-      $container->get('current_user')
+      $container->get('current_user'),
+      $container->get('entity_type.manager'),
+      $container->get('entity_field.manager')
     );
   }
 
@@ -135,20 +140,28 @@ class ServerFileResource extends ResourceBase {
    */
   public function post($data) {
     $payload = [];
-
+    $retval = $data['retval'] ?? '';
     if (empty($data['path'])) {
       throw new BadRequestHttpException('Missing file path');
     }
-
     $path = $data['path'];
-
-    if (!file_exists($path)) {
+    $file_exists = file_exists($path);
+    if (!$file_exists) {
       throw new BadRequestHttpException("File does not exist at: $path");
     }
+    $managed_file = $this->fileRepository->loadByUri($path);
+    $media_exists = $this->mediaExists($managed_file->id());
+    if ($media_exists) {
+      throw new BadRequestHttpException("Media already with this file already exists.");
+    }
 
-    // Ensure the file is registered as a managed file entity.
-    $file = $this->fileRepository->loadByUri($path);
-    if (!$file) {
+    // Returns file validity.
+    if ($retval === 'checkfile') {
+      $payload['existence'] = 'True';
+      return new ResourceResponse($payload);
+    }
+
+    if (!$managed_file) {
       $file = File::create([
         'uri' => $path,
         'status' => 1,
@@ -156,8 +169,6 @@ class ServerFileResource extends ResourceBase {
       ]);
       $file->save();
     }
-
-    $retval = $data['retval'] ?? '';
 
     // Return contents of a .txt file if requested.
     if ($retval === 'contents') {
@@ -176,11 +187,45 @@ class ServerFileResource extends ResourceBase {
       $payload['fid'] = $file->id();
     }
 
-    // File URL is generated but not currently returned.
-    $url = $this->fileUrlGenerator->generateAbsoluteString($file->getFileUri());
-
     return new ResourceResponse($payload);
   }
 
-}
+  /**
+   * Checks whether any media entities reference the given file ID.
+   *
+   * @param int $fid
+   *   The file ID to check.
+   *
+   * @return int[]
+   *   An array of media entity IDs referencing the file.
+   */
+  public function mediaExists($fid): array {
+    $referencing_media_ids = [];
+    $media_bundles = $this->entityTypeManager
+      ->getStorage('media_type')
+      ->loadMultiple();
+    foreach ($media_bundles as $bundle_id => $bundle) {
+      $field_definitions = $this->entityFieldManager
+        ->getFieldDefinitions('media', $bundle_id);
 
+      foreach ($field_definitions as $field_name => $field_definition) {
+        if ($field_definition->getType() === 'entity_reference'
+          && $field_definition->getSetting('target_type') === 'file') {
+          $query = $this->entityTypeManager
+            ->getStorage('media')
+            ->getQuery()
+            ->accessCheck(TRUE)
+            ->condition('bundle', $bundle_id)
+            ->condition("$field_name.target_id", $fid);
+          $media_ids = $query->execute();
+          if (!empty($media_ids)) {
+            $referencing_media_ids = array_merge($referencing_media_ids, $media_ids);
+          }
+        }
+      }
+    }
+
+    return array_unique($referencing_media_ids);
+  }
+
+}
