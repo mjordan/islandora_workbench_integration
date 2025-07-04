@@ -150,7 +150,7 @@ class ServerFileResource extends ResourceBase {
       throw new BadRequestHttpException("File does not exist at: $path");
     }
     $managed_file = $this->fileRepository->loadByUri($path);
-    $media_exists = $this->mediaExists($managed_file->id());
+    $media_exists = $managed_file && $this->mediaExists($managed_file->id());
 
     if ($media_exists) {
       throw new BadRequestHttpException("Media already with this file already exists.");
