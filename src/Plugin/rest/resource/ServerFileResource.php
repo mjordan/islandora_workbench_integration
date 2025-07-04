@@ -151,6 +151,7 @@ class ServerFileResource extends ResourceBase {
     }
     $managed_file = $this->fileRepository->loadByUri($path);
     $media_exists = $this->mediaExists($managed_file->id());
+
     if ($media_exists) {
       throw new BadRequestHttpException("Media already with this file already exists.");
     }
@@ -209,7 +210,7 @@ class ServerFileResource extends ResourceBase {
         ->getFieldDefinitions('media', $bundle_id);
 
       foreach ($field_definitions as $field_name => $field_definition) {
-        if ($field_definition->getType() === 'entity_reference'
+        if ($field_definition->getType() === 'file'
           && $field_definition->getSetting('target_type') === 'file') {
           $query = $this->entityTypeManager
             ->getStorage('media')
@@ -224,7 +225,6 @@ class ServerFileResource extends ResourceBase {
         }
       }
     }
-
     return array_unique($referencing_media_ids);
   }
 
