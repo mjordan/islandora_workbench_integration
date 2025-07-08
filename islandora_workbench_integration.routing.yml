@@ -29,7 +29,7 @@ islandora_workbench_integration.file_hash:
   options:
     _auth: ['basic_auth','jwt_auth','cookie']
 
-islandora_workbench_integration.node_actions:
+islandora_workbench_integration.node_actions_entity_display:
   path: '/islandora_workbench_integration/node_actions/entity_display/{entity_type}/{bundle}'
   defaults:
     _controller: '\Drupal\islandora_workbench_integration\Controller\IslandoraWorkbenchIntegrationNodeActionsController::entity_form_display'
@@ -43,4 +43,38 @@ islandora_workbench_integration.node_actions:
         entity_type:
             type: string
         bundle:
+            type: string
+
+islandora_workbench_integration.node_actions_field_config:
+  path: '/islandora_workbench_integration/node_actions/field_config/{entity_type}/{bundle}/{field_name}'
+  defaults:
+    _controller: '\Drupal\islandora_workbench_integration\Controller\IslandoraWorkbenchIntegrationNodeActionsController::field_config'
+  methods:
+    - 'GET'
+  requirements:
+    _permission: 'administer site configuration+use islandora workbench'
+  options:
+    _auth: ['basic_auth','jwt_auth','cookie']
+    parameters:
+        entity_type:
+            type: string
+        bundle:
+            type: string
+        field_name:
+            type: string
+
+islandora_workbench_integration.node_actions_field_storage_config:
+  path: '/islandora_workbench_integration/node_actions/field_storage_config/{entity_type}/{field_name}'
+  defaults:
+    _controller: '\Drupal\islandora_workbench_integration\Controller\IslandoraWorkbenchIntegrationNodeActionsController::field_storage_config'
+  methods:
+    - 'GET'
+  requirements:
+    _permission: 'administer site configuration+use islandora workbench'
+  options:
+    _auth: ['basic_auth','jwt_auth','cookie']
+    parameters:
+        entity_type:
+            type: string
+        field_name:
             type: string
