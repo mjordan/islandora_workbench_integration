@@ -1,0 +1,12 @@
+services:
+  islandora_workbench_integration.node_actions:
+    class: Drupal\islandora_workbench_integration\Controller\IslandoraWorkbenchIntegrationNodeActionsController
+    arguments: ['@entity_type.bundle.info', '@logger.channel.islandora_workbench_integration']
+    tags:
+      - { name: 'controller', id: islandora_workbench_integration.node_actions }
+  logger.channel.islandora_workbench_integration:
+    class: Drupal\Core\Logger\LoggerChannel
+    factory: [ '@logger.factory', get ]
+    arguments: ['islandora_workbench_integration']
+    tags:
+      - { name: 'logger.channel' }
