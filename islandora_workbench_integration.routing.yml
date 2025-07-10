@@ -32,7 +32,7 @@ islandora_workbench_integration.file_hash:
 islandora_workbench_integration.node_actions_entity_display:
   path: '/islandora_workbench_integration/node_actions/entity_display/{entity_type}/{bundle}'
   defaults:
-    _controller: '\Drupal\islandora_workbench_integration\Controller\IslandoraWorkbenchIntegrationNodeActionsController::entity_form_display'
+    _controller: '\Drupal\islandora_workbench_integration\Controller\IslandoraWorkbenchIntegrationNodeActionsController::entityFormDisplay'
   methods:
     - 'GET'
   requirements:
@@ -48,7 +48,7 @@ islandora_workbench_integration.node_actions_entity_display:
 islandora_workbench_integration.node_actions_field_config:
   path: '/islandora_workbench_integration/node_actions/field_config/{entity_type}/{bundle}/{field_name}'
   defaults:
-    _controller: '\Drupal\islandora_workbench_integration\Controller\IslandoraWorkbenchIntegrationNodeActionsController::field_config'
+    _controller: '\Drupal\islandora_workbench_integration\Controller\IslandoraWorkbenchIntegrationNodeActionsController::fieldConfig'
   methods:
     - 'GET'
   requirements:
@@ -66,7 +66,7 @@ islandora_workbench_integration.node_actions_field_config:
 islandora_workbench_integration.node_actions_field_storage_config:
   path: '/islandora_workbench_integration/node_actions/field_storage_config/{entity_type}/{field_name}'
   defaults:
-    _controller: '\Drupal\islandora_workbench_integration\Controller\IslandoraWorkbenchIntegrationNodeActionsController::field_storage_config'
+    _controller: '\Drupal\islandora_workbench_integration\Controller\IslandoraWorkbenchIntegrationNodeActionsController::fieldStorageConfig'
   methods:
     - 'GET'
   requirements:

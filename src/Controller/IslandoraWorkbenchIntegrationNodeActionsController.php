@@ -5,7 +5,6 @@ namespace Drupal\islandora_workbench_integration\Controller;
 use Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException;
 use Drupal\Component\Plugin\Exception\PluginNotFoundException;
 use Drupal\Core\Controller\ControllerBase;
-use Drupal\Core\Entity\EntityStorageException;
 use Drupal\Core\Entity\EntityTypeBundleInfoInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -19,12 +18,11 @@ use Symfony\Component\HttpFoundation\Response;
  * for a given entity type and bundle, primarily used in the context of
  * Islandora Workbench Integration.
  */
-class IslandoraWorkbenchIntegrationNodeActionsController extends ControllerBase
-{
+class IslandoraWorkbenchIntegrationNodeActionsController extends ControllerBase {
   /**
    * Log channel.
    *
-   * @var LoggerInterface
+   * @var \Psr\Log\LoggerInterface
    */
   private LoggerInterface $logger;
 
@@ -41,7 +39,7 @@ class IslandoraWorkbenchIntegrationNodeActionsController extends ControllerBase
    * @param \Drupal\Core\Entity\EntityTypeBundleInfoInterface $entity_type_bundle_info
    *   The entity type bundle info service.
    * @param \Psr\Log\LoggerInterface $logger
-   *  The logger service.
+   *   The logger service.
    */
   public function __construct(EntityTypeBundleInfoInterface $entity_type_bundle_info, LoggerInterface $logger) {
     $this->logger = $logger;
@@ -66,12 +64,16 @@ class IslandoraWorkbenchIntegrationNodeActionsController extends ControllerBase
 
   /**
    * Request handler for entity form display requests.
-   * @param string $entity_type The entity type to load.
-   * @param string $bundle The bundle of the entity type to load.
-   * @return Response The response object containing the entity form display or an error message.
+   *
+   * @param string $entity_type
+   *   The entity type to load.
+   * @param string $bundle
+   *   The bundle of the entity type to load.
+   *
+   * @return \Symfony\Component\HttpFoundation\Response
+   *   The json response of the entity form display or an error message.
    */
-  public function entity_form_display(string $entity_type, string $bundle): Response
-  {
+  public function entityFormDisplay(string $entity_type, string $bundle): Response {
     $this->logger->debug("Received request on node actions controller method entity_form_display with entity type: @type, bundle: @bundle", [
       '@type' => $entity_type,
       '@bundle' => $bundle,
@@ -82,7 +84,7 @@ class IslandoraWorkbenchIntegrationNodeActionsController extends ControllerBase
         '@bundle' => $bundle,
         '@type' => $entity_type,
       ]);
-      return new JsonResponse(['error' => 'Bundle does not exist for the given entity type.']);
+      return new JsonResponse(['error' => 'Bundle does not exist for the given entity type.'], 404);
     }
     try {
       $display = $this->entityTypeManager()->getStorage('entity_form_display')->load("{$entity_type}.{$bundle}.default");
@@ -91,19 +93,20 @@ class IslandoraWorkbenchIntegrationNodeActionsController extends ControllerBase
           '@type' => $entity_type,
           '@bundle' => $bundle,
         ]);
-        return new JsonResponse(['error' => 'Entity form display for the given type and bundle does not exist.']);
+        return new JsonResponse(['error' => 'Entity form display for the given type and bundle does not exist.'], 404);
       }
       $response = $display->toArray();
       // Remove unnecessary keys from the response.
       unset($response['uuid'], $response['_core'], $response['content'], $response['third_party_settings']);
       return new JsonResponse($response);
-    } catch (InvalidPluginDefinitionException | PluginNotFoundException $e) {
+    }
+    catch (InvalidPluginDefinitionException | PluginNotFoundException $e) {
       $this->logger->warning("Error loading entity form display for @type bundle @bundle: @message", [
         '@type' => $entity_type,
         '@bundle' => $bundle,
         '@message' => $e->getMessage(),
       ]);
-      return new JsonResponse(['error' => 'Invalid entity type or bundle specified.']);
+      return new JsonResponse(['error' => 'Invalid entity type or bundle specified.'], 500);
     }
   }
 
@@ -120,7 +123,7 @@ class IslandoraWorkbenchIntegrationNodeActionsController extends ControllerBase
    * @return \Symfony\Component\HttpFoundation\Response
    *   JSON response with field config or error.
    */
-  public function field_config(string $entity_type, string $bundle, string $field_name): Response {
+  public function fieldConfig(string $entity_type, string $bundle, string $field_name): Response {
     $this->logger->debug("Request for field config: type=@type, bundle=@bundle, field=@field", [
       '@type' => $entity_type,
       '@bundle' => $bundle,
@@ -144,12 +147,13 @@ class IslandoraWorkbenchIntegrationNodeActionsController extends ControllerBase
         return new JsonResponse(['error' => 'Field configuration not found.'], 404);
       }
 
-      // Optional: sanitize output (e.g., remove internal or sensitive keys)
       $data = $field_config->toArray();
+      // Remove unnecessary keys from the response.
       unset($data['uuid'], $data['_core']);
 
       return new JsonResponse($data);
-    } catch (InvalidPluginDefinitionException | PluginNotFoundException $e) {
+    }
+    catch (InvalidPluginDefinitionException | PluginNotFoundException $e) {
       $this->logger->error("Error loading field config @id: @message", [
         '@id' => "{$entity_type}.{$bundle}.{$field_name}",
         '@message' => $e->getMessage(),
@@ -169,7 +173,7 @@ class IslandoraWorkbenchIntegrationNodeActionsController extends ControllerBase
    * @return \Symfony\Component\HttpFoundation\JsonResponse
    *   JSON response with field storage config or error.
    */
-  public function field_storage_config(string $entity_type, string $field_name): JsonResponse {
+  public function fieldStorageConfig(string $entity_type, string $field_name): JsonResponse {
     $this->logger->debug("Request for field storage config: type=@type, field=@field", [
       '@type' => $entity_type,
       '@field' => $field_name,
@@ -182,18 +186,23 @@ class IslandoraWorkbenchIntegrationNodeActionsController extends ControllerBase
         ->load($field_storage_id);
 
       if (!$storage_config) {
-        $this->logger->warning("Field storage config not found for @id", ['@id' => $field_storage_id]);
+        $this->logger->warning(
+          "Field storage config not found for @id", ['@id' => $field_storage_id]
+        );
         return new JsonResponse(['error' => 'Field storage configuration not found.'], 404);
       }
 
       $data = $storage_config->toArray();
-      unset($data['uuid'], $data['_core']); // Remove internal/sensitive data if needed
+      // Remove unnecessary keys from the response.
+      unset($data['uuid'], $data['_core']);
       return new JsonResponse($data);
-    } catch (InvalidPluginDefinitionException | PluginNotFoundException $e) {
+    }
+    catch (InvalidPluginDefinitionException | PluginNotFoundException $e) {
       $this->logger->error("Error loading field storage config: @message", [
         '@message' => $e->getMessage(),
       ]);
       return new JsonResponse(['error' => 'Error loading field storage configuration.'], 500);
     }
   }
+
 }
