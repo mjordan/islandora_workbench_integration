@@ -24,9 +24,11 @@ display:
     position: 0
     display_options:
       access:
-        type: perm
+        type: multiple_permissions
         options:
-          perm: 'use islandora workbench'
+          permissions:
+            'use islandora workbench': 'use islandora workbench'
+            'administer taxonomy': 'administer taxonomy'
       cache:
         type: tag
         options: {  }

@@ -10,3 +10,17 @@ services:
     arguments: ['islandora_workbench_integration']
     tags:
       - { name: 'logger.channel' }
+  islandora_workbench_integration.node_own_delete_access:
+    class: Drupal\islandora_workbench_integration\Access\NodeOwnDeleteAccess
+    arguments: ['@logger.channel.islandora_workbench_integration']
+    tags:
+      - { name: access_check, applies_to: _access_node_own_delete }
+  islandora_workbench_integration.media_view_access:
+    class: Drupal\islandora_workbench_integration\Access\MediaViewAccess
+    arguments: ['@logger.channel.islandora_workbench_integration']
+    tags:
+      - { name: access_check, applies_to: _access_media_view }
+  islandora_workbench_integration.route_subscriber:
+    class: Drupal\islandora_workbench_integration\Routing\RouteSubscriber
+    tags:
+      - { name: event_subscriber }
