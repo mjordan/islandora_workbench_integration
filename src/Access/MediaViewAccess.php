@@ -14,14 +14,30 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class MediaViewAccess implements AccessInterface
 {
+  /**
+   * The logger service.
+   *
+   * @var \Psr\Log\LoggerInterface
+   */
   private $logger;
 
+  /**
+   * Basic constructor.
+   *
+   * @param LoggerInterface $logger
+   *    The logger service.
+   */
   public function __construct(LoggerInterface $logger) {
     $this->logger = $logger;
   }
 
   /**
    * Checks access to media types.
+   *
+   * @param Request $request
+   *   The current request.
+   * @param AccountInterface $account
+   *   The user account to check access for.
    *
    * @return \Drupal\Core\Access\AccessResult
    *   Access result.

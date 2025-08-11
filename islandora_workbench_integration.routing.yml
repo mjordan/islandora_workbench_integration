@@ -1,3 +1,11 @@
+system.islandora_workbench_integration:
+  path: '/admin/config/islandora/islandora_workbench_integration'
+  defaults:
+    _form: '\Drupal\islandora_workbench_integration\Form\PermissionsCheckForm'
+    _title: 'Workbench Integration Permissions Check'
+  requirements:
+    _permission: 'administer site configuration'
+
 islandora_workbench_integration.core_version:
   path: '/islandora_workbench_integration/core_version'
   defaults:

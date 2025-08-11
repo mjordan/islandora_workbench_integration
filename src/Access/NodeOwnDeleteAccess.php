@@ -20,12 +20,29 @@ class NodeOwnDeleteAccess implements AccessInterface {
    */
   protected $logger;
 
+  /**
+   * Basic constructor.
+   *
+   * @param LoggerInterface $logger
+   *   The logger service.
+   */
   public function __construct(
     LoggerInterface $logger
   ) {
     $this->logger = $logger;
   }
 
+  /**
+   * Checks access for node deletion.
+   *
+   * @param \Symfony\Component\HttpFoundation\Request $request
+   *   The current request.
+   * @param \Drupal\Core\Session\AccountInterface $account
+   *   The user account to check access for.
+   *
+   * @return \Drupal\Core\Access\AccessResultInterface
+   *   The access result.
+   */
   public function access(Request $request, AccountInterface $account) {
     $this->logger->info('Checking access for node deletion by user: @user', [
       '@user' => $account->getAccountName(),

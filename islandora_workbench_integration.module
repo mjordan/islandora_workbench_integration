@@ -7,6 +7,7 @@
  * This module adds views and REST interfaces for Islandora Workbench.
  */
 
+use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\node\Entity\NodeType;
 use Drupal\media\Entity\MediaType;
@@ -51,4 +52,34 @@ function islandora_workbench_integration_media_presave(EntityInterface $media) {
     // The "Create new revision" option is disabled.
     $media->setNewRevision(FALSE);
   }
+}
+
+/**
+ * Implements hook_entity_field_access().
+ *
+ * This hook checks access for file uploads via REST API to avoid the Content: Administer fields permission.
+ */
+function islandora_workbench_integration_entity_field_access($operation, $field_definition, $account, $items = NULL) {
+  // We only care about the 'edit' operation to file entities (file uploads are edits to the target field).
+  if ($operation !== 'edit' || $field_definition->getTargetEntityTypeId() !== 'file') {
+    return AccessResult::neutral();
+  }
+
+  $route_match = \Drupal::service('current_route_match');
+  $route_name = $route_match->getRouteName();
+
+  // The route name for POST file uploads from FileUploadResource is 'rest.file.upload.POST'
+  if ($route_name !== 'rest.file.upload.POST') {
+    return AccessResult::neutral();
+  }
+
+  // Check if the current user has our custom permission for uploading files via REST.
+  // This replaces the implicit "administer fields" requirement for this route.
+  if ($account->hasPermission('use islandora workbench')) {
+    // Explicitly allow, and set cacheability so this is permission-based.
+    return AccessResult::allowed()->cachePerPermissions();
+  }
+
+  // Fallback to neutral to allow other checks to run.
+  return AccessResult::neutral();
 }
