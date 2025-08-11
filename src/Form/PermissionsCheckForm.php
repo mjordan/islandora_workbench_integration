@@ -29,10 +29,9 @@ class PermissionsCheckForm extends FormBase
   protected $roleStorage;
 
   /**
-   * Permissions required for non-workbench roles.
+   * Permissions required for 'use islandora workbench' roles.
    *
-   * This array contains permissions that are required for roles that are not
-   * designated as workbench roles. These permissions are checked when the
+   * This array contains permissions that are checked when the
    * 'use islandora workbench' permission is not granted.
    *
    * @var array<string, string>
@@ -155,6 +154,9 @@ class PermissionsCheckForm extends FormBase
         } else {
           $this->messenger()->addStatus($this->t("The role '%role' has all required permissions.", ['%role' => $role->label()]));
         }
+      } else {
+        $this->messenger()->addError($this->t('The selected role does not exist.'));
+        $this->logger->error('The selected role does not exist or could not be loaded: @role', ['@role' => $selected_role]);
       }
     } else {
       $this->messenger()->addError($this->t('No role selected.'));
