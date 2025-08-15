@@ -1,0 +1,12 @@
+views.access_plugin.multiple_permissions:
+   type: views_access
+   label: 'Multiple permissions access'
+   mapping:
+     options:
+       type: mapping
+       label: 'Multiple permissions options'
+       mapping:
+         permissions:
+           type: mapping
+           label: 'Permissions mapping'
+           mapping: {}
