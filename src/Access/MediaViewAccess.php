@@ -10,10 +10,12 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
- * Gives access to media types without requiring 'administer media types' permission.
+ * Check access to media types.
+ *
+ * Allows access with either 'administer media types' or
+ * 'use islandora workbench' permissions.
  */
-class MediaViewAccess implements AccessInterface
-{
+class MediaViewAccess implements AccessInterface {
   /**
    * The logger service.
    *
@@ -24,8 +26,8 @@ class MediaViewAccess implements AccessInterface
   /**
    * Basic constructor.
    *
-   * @param LoggerInterface $logger
-   *    The logger service.
+   * @param \Psr\Log\LoggerInterface $logger
+   *   The logger service.
    */
   public function __construct(LoggerInterface $logger) {
     $this->logger = $logger;
@@ -34,9 +36,9 @@ class MediaViewAccess implements AccessInterface
   /**
    * Checks access to media types.
    *
-   * @param Request $request
+   * @param \Symfony\Component\HttpFoundation\Request $request
    *   The current request.
-   * @param AccountInterface $account
+   * @param \Drupal\Core\Session\AccountInterface $account
    *   The user account to check access for.
    *
    * @return \Drupal\Core\Access\AccessResult
@@ -58,7 +60,6 @@ class MediaViewAccess implements AccessInterface
       return AccessResult::neutral();
     }
 
-    // If the user has the 'administer media types' or 'use islandora workbench' permission, they can access.
     if ($account->hasPermission('administer media types') ||
         $account->hasPermission('use islandora workbench')) {
       return AccessResult::allowed();
@@ -66,4 +67,5 @@ class MediaViewAccess implements AccessInterface
 
     return AccessResult::forbidden();
   }
+
 }

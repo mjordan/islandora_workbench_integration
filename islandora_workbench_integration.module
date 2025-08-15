@@ -57,10 +57,11 @@ function islandora_workbench_integration_media_presave(EntityInterface $media) {
 /**
  * Implements hook_entity_field_access().
  *
- * This hook checks access for file uploads via REST API to avoid the Content: Administer fields permission.
+ * This hook checks access for file uploads via REST API to avoid the
+ * Content: Administer fields permission.
  */
 function islandora_workbench_integration_entity_field_access($operation, $field_definition, $account, $items = NULL) {
-  // We only care about the 'edit' operation to file entities (file uploads are edits to the target field).
+  // We only care about the 'edit' operation to file entities.
   if ($operation !== 'edit' || $field_definition->getTargetEntityTypeId() !== 'file') {
     return AccessResult::neutral();
   }
@@ -68,12 +69,12 @@ function islandora_workbench_integration_entity_field_access($operation, $field_
   $route_match = \Drupal::service('current_route_match');
   $route_name = $route_match->getRouteName();
 
-  // The route name for POST file uploads from FileUploadResource is 'rest.file.upload.POST'
+  // The route name for POST file uploads from FileUploadResource.
   if ($route_name !== 'rest.file.upload.POST') {
     return AccessResult::neutral();
   }
 
-  // Check if the current user has our custom permission for uploading files via REST.
+  // Check if the current user has our custom permission.
   // This replaces the implicit "administer fields" requirement for this route.
   if ($account->hasPermission('use islandora workbench')) {
     // Explicitly allow, and set cacheability so this is permission-based.

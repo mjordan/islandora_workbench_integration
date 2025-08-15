@@ -3,7 +3,6 @@
 namespace Drupal\islandora_workbench_integration\Access;
 
 use Drupal\Core\Access\AccessResult;
-use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Routing\Access\AccessInterface;
 use Drupal\Core\Session\AccountInterface;
 use Psr\Log\LoggerInterface;
@@ -11,24 +10,24 @@ use Symfony\Component\HttpFoundation\Request;
 use Drupal\node\NodeInterface;
 
 /**
- * Allows delete with 'delete any' or 'delete own' permissions for nodes bundles.
+ * Allows delete with 'delete any' or 'delete own' permissions for bundles.
  */
 class NodeOwnDeleteAccess implements AccessInterface {
 
   /**
-   * @var LoggerInterface The logger service.
+   * The logger service.
+   *
+   * @var \Psr\Log\LoggerInterface
    */
   protected $logger;
 
   /**
    * Basic constructor.
    *
-   * @param LoggerInterface $logger
+   * @param \Psr\Log\LoggerInterface $logger
    *   The logger service.
    */
-  public function __construct(
-    LoggerInterface $logger
-  ) {
+  public function __construct(LoggerInterface $logger) {
     $this->logger = $logger;
   }
 
@@ -68,4 +67,5 @@ class NodeOwnDeleteAccess implements AccessInterface {
 
     return AccessResult::forbidden("Permission delete any|own {$node->bundle()} content is required to delete this node.");
   }
+
 }

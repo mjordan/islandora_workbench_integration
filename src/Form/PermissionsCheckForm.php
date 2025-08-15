@@ -6,20 +6,19 @@ use Drupal\Component\Utility\Html;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Markup;
-use Drupal\user\Entity\Role;
+use Drupal\Core\Render\Renderer;
 use Drupal\user\RoleInterface;
 use Drupal\user\RoleStorageInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Provides a form to check permissions for the Islandora Workbench Integration module.
+ * Form to check permissions for the Islandora Workbench Integration module.
  *
- * This form allows administrators to select a user role and check if it has
- * the necessary permissions for using the Islandora Workbench Integration module.
+ * This form allows administrators to check if a user role has the necessary
+ * permissions for using the Islandora Workbench Integration module.
  */
-class PermissionsCheckForm extends FormBase
-{
+class PermissionsCheckForm extends FormBase {
 
   /**
    * The role storage service.
@@ -36,13 +35,13 @@ class PermissionsCheckForm extends FormBase
    *
    * @var array<string, string>
    */
-  private array $permissions_for_non_workbench_roles = [
+  private array $permissionsForNonWorkbenchRoles = [
     'administer taxonomy' => 'Administer vocabularies and terms',
     'administer site configuration' => 'Administer site configuration',
     'administer node form display' => 'Content: Administer form display',
     'administer node fields' => 'Content: Administer fields',
     'administer taxonomy_term form display' => 'Taxonomy term: Administer form display',
-    'administer taxonomy_term fields' => 'Taxonomy term: Administer fields'
+    'administer taxonomy_term fields' => 'Taxonomy term: Administer fields',
   ];
 
   /**
@@ -53,16 +52,30 @@ class PermissionsCheckForm extends FormBase
   protected LoggerInterface $logger;
 
   /**
+   * The renderer service.
+   *
+   * @var \Drupal\Core\Render\Renderer
+   */
+  protected Renderer $renderer;
+
+  /**
    * Basic constructor.
    *
    * @param \Drupal\user\RoleStorageInterface $role_storage
    *   The role storage service.
    * @param \Psr\Log\LoggerInterface $logger
    *   The logger service.
+   * @param \Drupal\Core\Render\Renderer $renderer
+   *   The renderer service.
    */
-  public function __construct(RoleStorageInterface $role_storage, LoggerInterface $logger) {
+  public function __construct(
+    RoleStorageInterface $role_storage,
+    LoggerInterface $logger,
+    Renderer $renderer,
+  ) {
     $this->roleStorage = $role_storage;
     $this->logger = $logger;
+    $this->renderer = $renderer;
   }
 
   /**
@@ -71,23 +84,22 @@ class PermissionsCheckForm extends FormBase
   public static function create(ContainerInterface $container) {
     return new static(
       $container->get('entity_type.manager')->getStorage('user_role'),
-      $container->get('logger.channel.islandora_workbench_integration')
+      $container->get('logger.channel.islandora_workbench_integration'),
+      $container->get('renderer'),
     );
   }
 
   /**
-   * @inheritDoc
+   * {@inheritDoc}
    */
-  public function getFormId()
-  {
+  public function getFormId() {
     return 'islandora_workbench_integration_permissions_check_form';
   }
 
   /**
-   * @inheritDoc
+   * {@inheritDoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state)
-  {
+  public function buildForm(array $form, FormStateInterface $form_state) {
     $form['#title'] = $this->t('Islandora Workbench Permissions Check');
 
     $form['message'] = [
@@ -118,17 +130,16 @@ class PermissionsCheckForm extends FormBase
   }
 
   /**
-   * @inheritDoc
+   * {@inheritDoc}
    */
-  public function submitForm(array &$form, FormStateInterface $form_state)
-  {
+  public function submitForm(array &$form, FormStateInterface $form_state) {
     $selected_role = $form_state->getValue('role');
     if ($selected_role) {
-      $role = Role::load($selected_role);
-      if ($role) {
+      $role = $this->roleStorage->load($selected_role);
+      if ($role instanceof RoleInterface) {
         $missing_permissions = [];
         if (!$role->hasPermission('use islandora workbench')) {
-          foreach ($this->permissions_for_non_workbench_roles as $permission => $perm_label) {
+          foreach ($this->permissionsForNonWorkbenchRoles as $permission => $perm_label) {
             if (!$role->hasPermission($permission)) {
               $missing_permissions[] = $perm_label;
             }
@@ -144,22 +155,26 @@ class PermissionsCheckForm extends FormBase
             '#items' => $missing_permissions,
             '#list_type' => 'ul',
           ];
-          $message[] = \Drupal::service('renderer')->renderRoot($list_render);
+          $message[] = $this->renderer->renderRoot($list_render);
         }
         if ($missing_manage_members) {
           $message[] = $this->t("The role '%role' is also missing the 'manage members' permission.", ['%role' => $role->label()]);
         }
         if (!empty($message)) {
           $this->messenger()->addWarning(Markup::create(implode(' ', $message)));
-        } else {
+        }
+        else {
           $this->messenger()->addStatus($this->t("The role '%role' has all required permissions.", ['%role' => $role->label()]));
         }
-      } else {
+      }
+      else {
         $this->messenger()->addError($this->t('The selected role does not exist.'));
         $this->logger->error('The selected role does not exist or could not be loaded: @role', ['@role' => $selected_role]);
       }
-    } else {
+    }
+    else {
       $this->messenger()->addError($this->t('No role selected.'));
     }
   }
+
 }

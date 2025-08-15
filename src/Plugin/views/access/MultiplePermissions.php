@@ -1,4 +1,5 @@
 <?php
+
 namespace Drupal\islandora_workbench_integration\Plugin\views\access;
 
 use Drupal\Core\Access\AccessResult;
@@ -7,7 +8,6 @@ use Drupal\Core\Cache\CacheableDependencyInterface;
 use Drupal\Core\Extension\ModuleExtensionList;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
@@ -29,8 +29,7 @@ use Symfony\Component\Routing\Route;
   help: new TranslatableMarkup('Access will be granted to users with any of the specified permission strings.'),
 )]
 class MultiplePermissions extends AccessPluginBase implements
-  CacheableDependencyInterface
-{
+  CacheableDependencyInterface {
 
   use StringTranslationTrait;
 
@@ -50,6 +49,8 @@ class MultiplePermissions extends AccessPluginBase implements
 
   /**
    * Module extension list.
+   *
+   * @var \Drupal\Core\Extension\ModuleExtensionList
    */
   protected ModuleExtensionList $moduleExtensionList;
 
@@ -61,12 +62,18 @@ class MultiplePermissions extends AccessPluginBase implements
   /**
    * Basic constructor.
    *
-   * @param array $configuration The plugin configuration.
-   * @param string $plugin_id The plugin ID.
-   * @param mixed $plugin_definition The plugin definition.
-   * @param PermissionHandlerInterface $permission_handler The permission handler service.
-   * @param ModuleExtensionList|ModuleHandlerInterface $module_extension_list The module extension list.
-   * @param LoggerInterface $logger The logger service.
+   * @param array $configuration
+   *   The plugin configuration.
+   * @param string $plugin_id
+   *   The plugin ID.
+   * @param mixed $plugin_definition
+   *   The plugin definition.
+   * @param \Drupal\user\PermissionHandlerInterface $permission_handler
+   *   The permission handler service.
+   * @param \Drupal\Core\Extension\ModuleExtensionList|\Drupal\Core\Extension\ModuleHandlerInterface $module_extension_list
+   *   The module extension list.
+   * @param \Psr\Log\LoggerInterface $logger
+   *   The logger service.
    */
   public function __construct(
     array $configuration,
@@ -111,14 +118,13 @@ class MultiplePermissions extends AccessPluginBase implements
         $permission_titles[] = $permissions[$perm]['title'];
       }
     }
-    return $this->t(implode(', ', $permission_titles) ?? "No permissions selected");
+    return implode(', ', $permission_titles ?? "No permissions selected");
   }
 
   /**
-   * @{inheritdoc}
+   * {@inheritdoc}
    */
-  public function access(AccountInterface $account)
-  {
+  public function access(AccountInterface $account) {
     foreach ($this->options['permissions'] as $permission) {
       if ($account->hasPermission($permission)) {
         return AccessResult::allowed()->addCacheContexts(['user.permissions']);
@@ -130,8 +136,7 @@ class MultiplePermissions extends AccessPluginBase implements
   /**
    * {@inheritdoc}
    */
-  protected function defineOptions()
-  {
+  protected function defineOptions() {
     $options = parent::defineOptions();
     $options['multiple_permissions'] = ['default' => 'access content'];
     return $options;
@@ -169,10 +174,9 @@ class MultiplePermissions extends AccessPluginBase implements
   }
 
   /**
-   * @inheritDoc
+   * {@inheritdoc}
    */
-  public function alterRouteDefinition(Route $route)
-  {
+  public function alterRouteDefinition(Route $route) {
     // Append route-level permission check for each permission.
     if (!empty($this->options['permissions'])) {
       $route->setRequirement('_permission', implode('+', $this->options['permissions']));
@@ -199,4 +203,5 @@ class MultiplePermissions extends AccessPluginBase implements
   public function getCacheTags() {
     return [];
   }
+
 }

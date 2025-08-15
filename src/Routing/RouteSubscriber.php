@@ -1,4 +1,5 @@
 <?php
+
 namespace Drupal\islandora_workbench_integration\Routing;
 
 use Drupal\Core\Routing\RouteSubscriberBase;
@@ -7,11 +8,10 @@ use Symfony\Component\Routing\RouteCollection;
 /**
  * Alter routes for the Islandora Workbench Integration module.
  */
-class RouteSubscriber extends RouteSubscriberBase
-{
+class RouteSubscriber extends RouteSubscriberBase {
 
   /**
-   * @inheritDoc
+   * {@inheritDoc}
    */
   protected function alterRoutes(RouteCollection $collection) {
     if ($route = $collection->get('rest.entity.node.DELETE')) {
@@ -33,4 +33,5 @@ class RouteSubscriber extends RouteSubscriberBase
       ]);
     }
   }
+
 }
