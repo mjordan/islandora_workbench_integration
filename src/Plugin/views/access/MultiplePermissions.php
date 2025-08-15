@@ -138,7 +138,7 @@ class MultiplePermissions extends AccessPluginBase implements
    */
   protected function defineOptions() {
     $options = parent::defineOptions();
-    $options['multiple_permissions'] = ['default' => ['access content']];
+    $options['permissions'] = ['default' => []];
     return $options;
   }
 

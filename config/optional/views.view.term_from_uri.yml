@@ -2,6 +2,7 @@ langcode: en
 status: true
 dependencies:
   module:
+    - islandora_workbench_integration
     - rest
     - serialization
     - taxonomy
