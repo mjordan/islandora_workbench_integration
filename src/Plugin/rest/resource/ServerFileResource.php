@@ -153,7 +153,7 @@ class ServerFileResource extends ResourceBase {
     $media_exists = $managed_file && $this->mediaExists($managed_file->id());
 
     if ($media_exists) {
-      throw new BadRequestHttpException("Media already with this file already exists.");
+      throw new BadRequestHttpException("Media with this file already exists.");
     }
 
     // Returns file validity.
