@@ -24,3 +24,19 @@ islandora_workbench_integration.file_hash:
     _permission: 'administer site configuration'
   options:
     _auth: ['basic_auth','jwt_auth','cookie']
+
+islandora_workbench_integration.workbench_rename_file:
+  path: '/islandora_workbench_integration/rename/{file}'
+  defaults:
+    _controller: '\Drupal\islandora_workbench_integration\Controller\IslandoraWorkbenchIntegrationFileRenameController::main'
+    _title: 'Rename file'
+    _access: TRUE
+  requirements:
+    _permission: 'rename files'
+  methods: [GET, POST]
+  options:
+    _admin_route: TRUE
+    _auth: ['basic_auth']
+    parameters:
+      file:
+        type: entity:file
