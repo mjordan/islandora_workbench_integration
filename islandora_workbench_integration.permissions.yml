@@ -1,0 +1,4 @@
+rename files:
+  title: 'Rename files'
+  description: 'Rename files.'
+  restrict access: true
