@@ -37,13 +37,13 @@ class NodeOwnDeleteAccess implements AccessInterface {
    * @param \Drupal\Core\Session\AccountInterface $account
    *   The user account to check access for.
    * @param \Symfony\Component\HttpFoundation\Request|null $request
-   * The current request if available.
+   *   The current request if available.
    *
    * @return \Drupal\Core\Access\AccessResultInterface
    *   The access result.
    */
-  public function access(AccountInterface $account, ?Request $request = null) {
-    if ($request === null) {
+  public function access(AccountInterface $account, ?Request $request = NULL) {
+    if ($request === NULL) {
       // If no request is provided, we cannot determine access.
       return AccessResult::neutral();
     }
