@@ -36,18 +36,19 @@ class MediaViewAccess implements AccessInterface {
   /**
    * Checks access to media types.
    *
-   * @param \Symfony\Component\HttpFoundation\Request $request
-   *   The current request.
    * @param \Drupal\Core\Session\AccountInterface $account
    *   The user account to check access for.
+   * @param \Symfony\Component\HttpFoundation\Request|null $request
+   * *   The current request if available.
    *
    * @return \Drupal\Core\Access\AccessResult
    *   Access result.
    */
-  public function access(Request $request, AccountInterface $account) {
-    $this->logger->info('Checking access for media types by user: @user', [
-      '@user' => $account->getAccountName(),
-    ]);
+  public function access(AccountInterface $account, ?Request $request = null) {
+    if ($request === null) {
+      // If no request is provided, we cannot determine access.
+      return AccessResult::neutral();
+    }
     $media = $request->attributes->get('media');
 
     if (!$media) {

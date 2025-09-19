@@ -34,18 +34,19 @@ class NodeOwnDeleteAccess implements AccessInterface {
   /**
    * Checks access for node deletion.
    *
-   * @param \Symfony\Component\HttpFoundation\Request $request
-   *   The current request.
    * @param \Drupal\Core\Session\AccountInterface $account
    *   The user account to check access for.
+   * @param \Symfony\Component\HttpFoundation\Request|null $request
+   * The current request if available.
    *
    * @return \Drupal\Core\Access\AccessResultInterface
    *   The access result.
    */
-  public function access(Request $request, AccountInterface $account) {
-    $this->logger->info('Checking access for node deletion by user: @user', [
-      '@user' => $account->getAccountName(),
-    ]);
+  public function access(AccountInterface $account, ?Request $request = null) {
+    if ($request === null) {
+      // If no request is provided, we cannot determine access.
+      return AccessResult::neutral();
+    }
     $node = $request->attributes->get('node');
 
     if (!$node instanceof NodeInterface) {
