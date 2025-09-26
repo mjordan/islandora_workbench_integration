@@ -1,0 +1,5 @@
+services:
+  islandora_workbench_integration.translation_subscriber:
+    class: Drupal\islandora_workbench_integration\EventSubscriber\RequestEventSubscriber
+    tags:
+      - { name: 'event_subscriber' }
