@@ -205,26 +205,29 @@ class ServerFileResource extends ResourceBase {
     $media_bundles = $this->entityTypeManager
       ->getStorage('media_type')
       ->loadMultiple();
+
     foreach ($media_bundles as $bundle_id => $bundle) {
       $field_definitions = $this->entityFieldManager
         ->getFieldDefinitions('media', $bundle_id);
 
       foreach ($field_definitions as $field_name => $field_definition) {
-        if ($field_definition->getType() === 'file'
-          && $field_definition->getSetting('target_type') === 'file') {
+        if ($field_definition->getSetting('target_type') === 'file') {
           $query = $this->entityTypeManager
             ->getStorage('media')
             ->getQuery()
             ->accessCheck(TRUE)
             ->condition('bundle', $bundle_id)
             ->condition("$field_name.target_id", $fid);
+
           $media_ids = $query->execute();
+
           if (!empty($media_ids)) {
             $referencing_media_ids = array_merge($referencing_media_ids, $media_ids);
           }
         }
       }
     }
+
     return array_unique($referencing_media_ids);
   }
 
