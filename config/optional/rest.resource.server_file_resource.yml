@@ -1,17 +1,16 @@
-uuid: 25aef6ba-752b-4b62-9140-69043c383363
 langcode: en
 status: true
 dependencies:
   module:
     - basic_auth
-    - node
+    - islandora_workbench_integration
     - serialization
-id: entity.node_type
-plugin_id: 'entity:node_type'
+id: server_file_resource
+plugin_id: server_file_resource
 granularity: resource
 configuration:
   methods:
-    - GET
+    - POST
   formats:
     - json
   authentication:
