@@ -218,6 +218,7 @@ display:
         options: {  }
       auth:
         - basic_auth
+        - jwt_auth
       arguments:
         name:
           id: name
