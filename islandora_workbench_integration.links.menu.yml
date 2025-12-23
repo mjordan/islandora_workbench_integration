@@ -1,0 +1,6 @@
+system.admin_config_islandora_workbench_integration:
+  title: 'Islandora Workbench Integration'
+  description: 'Islandora Workbench Integration configuration settings.'
+  parent: system.admin_config_islandora
+  route_name: system.islandora_workbench_integration
+  weight: 100

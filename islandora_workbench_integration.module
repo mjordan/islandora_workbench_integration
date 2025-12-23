@@ -7,6 +7,7 @@
  * This module adds views and REST interfaces for Islandora Workbench.
  */
 
+use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\node\Entity\NodeType;
 use Drupal\media\Entity\MediaType;
@@ -51,4 +52,62 @@ function islandora_workbench_integration_media_presave(EntityInterface $media) {
     // The "Create new revision" option is disabled.
     $media->setNewRevision(FALSE);
   }
+}
+
+/**
+ * Implements hook_entity_field_access().
+ *
+ * This hook checks access for file uploads via REST API to avoid the
+ * Content: Administer fields permission.
+ */
+function islandora_workbench_integration_entity_field_access($operation, $field_definition, $account, $items = NULL) {
+  // We only care about the 'edit' operation to file or media entities.
+  if ($operation !== 'edit' || !in_array($field_definition->getTargetEntityTypeId(), ['file', 'media'])) {
+    return AccessResult::neutral();
+  }
+
+  try {
+    $route_match = \Drupal::service('current_route_match');
+    $route_name = $route_match->getRouteName();
+
+    // Log for debugging.
+    \Drupal::logger('logger.channel.islandora_workbench_integration')->debug('Field access check: route = @route, field = @field, user = @user', [
+      '@route' => $route_name,
+      '@field' => $field_definition->getName(),
+      '@user' => $account->id(),
+    ]);
+
+    // The route name for POST file uploads from FileUploadResource.
+    if ($route_name !== 'rest.file.upload.POST') {
+      return AccessResult::neutral();
+    }
+
+    $request = \Drupal::requestStack()->getCurrentRequest();
+    if (!$request || $request->getMethod() !== 'POST') {
+      return AccessResult::neutral();
+    }
+
+    // Check if the current user has our custom permission.
+    // This replaces the implicit "administer fields" requirement.
+    if ($account->hasPermission('use islandora workbench')) {
+      $entity_type = $field_definition->getTargetEntityTypeId();
+      \Drupal::logger('logger.channel.islandora_workbench_integration')->info(
+        "Allowing $entity_type field access for workbench user @user",
+        ['@user' => $account->id()]
+      );
+      // Explicitly allow, and set cacheability so this is permission-based.
+      return AccessResult::allowed()->cachePerPermissions();
+    }
+  }
+  catch (Exception $e) {
+    \Drupal::logger('logger.channel.islandora_workbench_integration')->error(
+      'Error checking file field access for workbench user @user: @message',
+      [
+        '@user' => $account->id(),
+        '@message' => $e->getMessage(),
+      ]
+    );
+  }
+  // Fallback to neutral to allow other checks to run.
+  return AccessResult::neutral();
 }

@@ -2,6 +2,7 @@ langcode: en
 status: true
 dependencies:
   module:
+    - islandora_workbench_integration
     - rest
     - serialization
     - taxonomy
@@ -23,9 +24,11 @@ display:
     position: 0
     display_options:
       access:
-        type: perm
+        type: multiple_permissions
         options:
-          perm: 'administer taxonomy'
+          permissions:
+            'use islandora workbench': 'use islandora workbench'
+            'administer taxonomy': 'administer taxonomy'
       cache:
         type: tag
         options: {  }

@@ -1,0 +1,26 @@
+services:
+  islandora_workbench_integration.node_actions:
+    class: Drupal\islandora_workbench_integration\Controller\IslandoraWorkbenchIntegrationNodeActionsController
+    arguments: ['@entity_type.bundle.info', '@logger.channel.islandora_workbench_integration']
+    tags:
+      - { name: 'controller', id: islandora_workbench_integration.node_actions }
+  logger.channel.islandora_workbench_integration:
+    class: Drupal\Core\Logger\LoggerChannel
+    factory: [ '@logger.factory', get ]
+    arguments: ['islandora_workbench_integration']
+    tags:
+      - { name: 'logger.channel' }
+  islandora_workbench_integration.node_own_delete_access:
+    class: Drupal\islandora_workbench_integration\Access\NodeOwnDeleteAccess
+    arguments: ['@logger.channel.islandora_workbench_integration']
+    tags:
+      - { name: access_check, applies_to: _access_node_own_delete }
+  islandora_workbench_integration.media_view_access:
+    class: Drupal\islandora_workbench_integration\Access\MediaViewAccess
+    arguments: ['@logger.channel.islandora_workbench_integration']
+    tags:
+      - { name: access_check, applies_to: _access_media_view }
+  islandora_workbench_integration.route_subscriber:
+    class: Drupal\islandora_workbench_integration\Routing\RouteSubscriber
+    tags:
+      - { name: event_subscriber }

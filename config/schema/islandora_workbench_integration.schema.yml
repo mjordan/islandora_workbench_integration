@@ -1,0 +1,10 @@
+views.access.multiple_permissions:
+   type: mapping
+   label: 'Access Plugin: Multiple permissions (OR)'
+   mapping:
+     permissions:
+       type: sequence
+       label: 'Permissions'
+       sequence:
+         type: string
+         label: 'Permission'
