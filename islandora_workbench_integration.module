@@ -70,13 +70,6 @@ function islandora_workbench_integration_entity_field_access($operation, $field_
     $route_match = \Drupal::service('current_route_match');
     $route_name = $route_match->getRouteName();
 
-    // Log for debugging.
-    \Drupal::logger('logger.channel.islandora_workbench_integration')->debug('Field access check: route = @route, field = @field, user = @user', [
-      '@route' => $route_name,
-      '@field' => $field_definition->getName(),
-      '@user' => $account->id(),
-    ]);
-
     // The route name for POST file uploads from FileUploadResource.
     if ($route_name !== 'rest.file.upload.POST') {
       return AccessResult::neutral();
@@ -91,10 +84,6 @@ function islandora_workbench_integration_entity_field_access($operation, $field_
     // This replaces the implicit "administer fields" requirement.
     if ($account->hasPermission('use islandora workbench')) {
       $entity_type = $field_definition->getTargetEntityTypeId();
-      \Drupal::logger('logger.channel.islandora_workbench_integration')->info(
-        "Allowing $entity_type field access for workbench user @user",
-        ['@user' => $account->id()]
-      );
       // Explicitly allow, and set cacheability so this is permission-based.
       return AccessResult::allowed()->cachePerPermissions();
     }
