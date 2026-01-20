@@ -5,4 +5,4 @@ package: Islandora
 core_version_requirement: ^10 || ^11
 dependencies:
   - islandora:islandora
-version: "1.2.0"
+version: "1.2.1"

@@ -74,10 +74,6 @@ class IslandoraWorkbenchIntegrationNodeActionsController extends ControllerBase 
    *   The json response of the entity form display or an error message.
    */
   public function entityFormDisplay(string $entity_type, string $bundle): Response {
-    $this->logger->debug("Received request on node actions controller method entity_form_display with entity type: @type, bundle: @bundle", [
-      '@type' => $entity_type,
-      '@bundle' => $bundle,
-    ]);
     $bundle_info = $this->entityTypeBundleInfo->getBundleInfo($entity_type);
     if (!isset($bundle_info[$bundle])) {
       $this->logger->warning("Bundle @bundle does not exist for entity type @type", [
@@ -124,12 +120,6 @@ class IslandoraWorkbenchIntegrationNodeActionsController extends ControllerBase 
    *   JSON response with field config or error.
    */
   public function fieldConfig(string $entity_type, string $bundle, string $field_name): Response {
-    $this->logger->debug("Request for field config: type=@type, bundle=@bundle, field=@field", [
-      '@type' => $entity_type,
-      '@bundle' => $bundle,
-      '@field' => $field_name,
-    ]);
-
     $bundle_info = $this->entityTypeBundleInfo->getBundleInfo($entity_type);
     if (!isset($bundle_info[$bundle])) {
       $this->logger->warning("Bundle @bundle does not exist for entity type @type", [
@@ -174,11 +164,6 @@ class IslandoraWorkbenchIntegrationNodeActionsController extends ControllerBase 
    *   JSON response with field storage config or error.
    */
   public function fieldStorageConfig(string $entity_type, string $field_name): JsonResponse {
-    $this->logger->debug("Request for field storage config: type=@type, field=@field", [
-      '@type' => $entity_type,
-      '@field' => $field_name,
-    ]);
-
     try {
       $field_storage_id = "{$entity_type}.{$field_name}";
       $storage_config = $this->entityTypeManager()
