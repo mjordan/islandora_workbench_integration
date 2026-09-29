@@ -258,6 +258,37 @@ class MembersOfNodeViewTest extends BrowserTestBase {
   }
 
   /**
+   * Tests that members sharing the same field_weight are then ordered by
+   * nid ascending, per the secondary sort on the rest_export_1 display.
+   *
+   * @dataProvider userProvider
+   */
+  public function testMembersOfNodeBreaksWeightTiesByNid(string $user): void {
+    $parent = $this->createMemberNode('Parent object', NULL, 0);
+
+    // childTieFirst and childTieSecond share the same weight. Since nids
+    // are assigned in creation order, childTieFirst will have the lower
+    // nid and should sort first among the tied pair.
+    $childTieFirst = $this->createMemberNode('Tied child, lower nid', $parent, 5);
+    $childTieSecond = $this->createMemberNode('Tied child, higher nid', $parent, 5);
+    $childHeaviest = $this->createMemberNode('Untied heaviest child', $parent, 100);
+
+    $this->customLogin($user);
+    $this->drupalGet('islandora_workbench_integration/members-of-node/' . $parent->id(), [
+      'query' => ['_format' => 'json'],
+    ]);
+    $this->assertSession()->statusCodeEquals(200);
+
+    $body = $this->getJsonResponse();
+    $returnedNids = array_map('intval', array_column($body, 'nid'));
+    $this->assertSame(
+      [$childTieFirst->id(), $childTieSecond->id(), $childHeaviest->id()],
+      $returnedNids,
+      'Members with equal field_weight should be ordered by nid ascending as the tie-break, before members with a strictly greater weight.'
+    );
+  }
+
+  /**
    * Tests that a node with no members returns an empty array, not an error.
    *
    * @dataProvider userProvider
