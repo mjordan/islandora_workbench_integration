@@ -1,0 +1,70 @@
+<?php
+
+/**
+ * @file
+ * Update hooks for the Islandora Workbench Integration module.
+ */
+
+use Drupal\Core\Config\FileStorage;
+
+/**
+ * Imports a single optional View config by id, if it does not already exist.
+ *
+ * Drupal only auto-imports config/optional entries when a module is first
+ * installed (or when another module's install/enable makes a previously
+ * unmet dependency available) — not on a routine code deploy. This helper
+ * performs the equivalent of "drush cim --partial --source=.../config/optional"
+ * for a single View, for use from hook_update_N() implementations.
+ *
+ * If the View already exists, it is left untouched rather than overwritten,
+ * so this is safe to re-run and safe against local customization.
+ *
+ * @param string $view_id
+ *   The View's config id, e.g. 'members_of_node'.
+ *
+ * @return \Drupal\Core\StringTranslation\TranslatableMarkup
+ *   A message describing what happened, for use in an update hook's
+ *   return value.
+ */
+function _islandora_workbench_integration_add_optional_view($view_id) {
+  $view_storage = \Drupal::entityTypeManager()->getStorage('view');
+
+  if ($view_storage->load($view_id)) {
+    return t('The "@id" View already exists and was left unchanged.', [
+      '@id' => $view_id,
+    ]);
+  }
+
+  $config_path = \Drupal::service('extension.list.module')
+    ->getPath('islandora_workbench_integration') . '/config/optional';
+  $file_storage = new FileStorage($config_path);
+  $data = $file_storage->read('views.view.' . $view_id);
+
+  if ($data === FALSE) {
+    throw new \RuntimeException(sprintf(
+      'Could not read views.view.%s.yml from %s.',
+      $view_id,
+      $config_path
+    ));
+  }
+
+  $view_storage->createFromStorageRecord($data)->save();
+
+  return t('Created the "@id" View.', ['@id' => $view_id]);
+}
+
+/**
+ * Imports this module's optional Views for sites where it is already active.
+ *
+ * Covers all three Views the module ships under config/optional
+ * (term_from_uri, term_from_term_name, members_of_node), not just the most
+ * recently added one, as a general backstop for any site that is missing
+ * one of them for any reason.
+ */
+function islandora_workbench_integration_update_10001() {
+  $messages = [];
+  foreach (['term_from_uri', 'term_from_term_name', 'members_of_node'] as $view_id) {
+    $messages[] = _islandora_workbench_integration_add_optional_view($view_id);
+  }
+  return implode("\n", $messages);
+}
