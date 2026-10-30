@@ -1,7 +1,7 @@
 services:
   islandora_workbench_integration.node_actions:
     class: Drupal\islandora_workbench_integration\Controller\IslandoraWorkbenchIntegrationNodeActionsController
-    arguments: ['@entity_type.bundle.info', '@logger.channel.islandora_workbench_integration']
+    arguments: ['@entity_type.bundle.info', '@logger.channel.islandora_workbench_integration', '@entity_field.manager', '@plugin.manager.field.field_type']
     tags:
       - { name: 'controller', id: islandora_workbench_integration.node_actions }
   logger.channel.islandora_workbench_integration:

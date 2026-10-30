@@ -4,31 +4,51 @@ namespace Drupal\islandora_workbench_integration\Controller;
 
 use Drupal\Core\Cache\CacheableJsonResponse;
 use Drupal\Core\Cache\CacheableMetadata;
-use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
+/**
+ * Performs a check for the existence of the media type.
+ *
+ * @package Drupal\islandora_workbench_integration\Controller
+ */
+class MediaActionsController extends ControllerBase {
 
-class MediaActionsController extends ControllerBase
-{
+  /**
+   * Basic constructor.
+   *
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   The entity type manager service.
+   */
   public function __construct(
     EntityTypeManagerInterface $entity_type_manager,
-    ConfigFactoryInterface $config_factory,
   ) {
     $this->entityTypeManager = $entity_type_manager;
-    $this->configFactory = $config_factory;
   }
 
+  /**
+   * Creates a new instance of the controller.
+   *
+   * @param \Symfony\Component\DependencyInjection\ContainerInterface $container
+   *   The service container.
+   *
+   * @return static
+   */
   public static function create(ContainerInterface $container): static {
     return new static(
       $container->get('entity_type.manager'),
-      $container->get('config.factory'),
     );
   }
 
   /**
-   * Returns cacheable media type response, invalidated when the type is added/removed.
+   * Returns existence of a media type as a cacheable JSON response.
+   *
+   * @param string $media_type
+   *   The media type to check.
+   *
+   * @return \Drupal\Core\Cache\CacheableJsonResponse
+   *   The cacheable response.
    */
   public function getMediaType(string $media_type): CacheableJsonResponse {
     $storage = $this->entityTypeManager->getStorage('media_type');
@@ -54,6 +74,5 @@ class MediaActionsController extends ControllerBase
 
     return $response;
   }
-
 
 }
