@@ -6,6 +6,7 @@ Drupal 10/11 Module required by [Islandora Workbench](https://github.com/mjordan
 
 * Term from URI
 * Term from term name
+* Member of node
 
 Also enables the following REST resources:
 
@@ -51,15 +52,7 @@ By default, all vocabularies are registered in the views. To prevent vocabularie
 
 ## Updates
 
-Since this module enables a number of REST endpoints, you may need to reimport the configuration if a new endpoint is added. For example, after pulling in updates from Github, you should run the following `drush` commands from within the `/var/www/html/drupal/web` directory:
-
-1. `drush cim -y --partial --source=modules/contrib/islandora_workbench_integration/config/optional`
-1. `drush cr`
-
-Or, if you are using ISLE:
-
-1. `docker-compose exec -T drupal with-contenv bash -lc "drush cim -y --partial --source=modules/contrib/islandora_workbench_integration/config/optional"`
-1. `docker-compose exec -T drupal with-contenv bash -lc "drush cr"`
+This module enables a number of REST endpoints, upon installation the included Views are initially installed. If however, you are updating this module to a newer version of this module only newly added Views will be installed and existing Views will not be overwritten protecting any local customizations.  
 
 Note that as of the 1.0.0 release, the "Terms in vocabulary" View is no longer used by Workbench. Unless you are using this View for some other purpose, as of version 1.0.0 you can disable/delete it from your Drupal.
 
