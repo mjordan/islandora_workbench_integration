@@ -9,9 +9,11 @@ use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
+/**
+ * Controller providing REST endpoints for media type actions.
+ */
+class MediaActionsController extends ControllerBase {
 
-class MediaActionsController extends ControllerBase
-{
   public function __construct(
     EntityTypeManagerInterface $entity_type_manager,
     ConfigFactoryInterface $config_factory,
@@ -20,6 +22,9 @@ class MediaActionsController extends ControllerBase
     $this->configFactory = $config_factory;
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public static function create(ContainerInterface $container): static {
     return new static(
       $container->get('entity_type.manager'),
@@ -28,7 +33,7 @@ class MediaActionsController extends ControllerBase
   }
 
   /**
-   * Returns cacheable media type response, invalidated when the type is added/removed.
+   * Returns cacheable media type response.
    */
   public function getMediaType(string $media_type): CacheableJsonResponse {
     $storage = $this->entityTypeManager->getStorage('media_type');
@@ -54,6 +59,5 @@ class MediaActionsController extends ControllerBase
 
     return $response;
   }
-
 
 }

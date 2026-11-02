@@ -22,7 +22,7 @@ use Drupal\user\Entity\User;
  *
  * @group islandora_workbench_integration
  */
-class MembersOfNodeViewTest extends BrowserTestBase {
+class IslandoraWorkbenchIntegrationMembersOfNodeViewTest extends BrowserTestBase {
 
   use EntityReferenceTestTrait;
 
@@ -258,8 +258,10 @@ class MembersOfNodeViewTest extends BrowserTestBase {
   }
 
   /**
-   * Tests that members sharing the same field_weight are then ordered by
-   * nid ascending, per the secondary sort on the rest_export_1 display.
+   * Tests that members sharing the same field_weight are ordered by nid.
+   *
+   * This is the secondary sort on the rest_export_1 display, which breaks
+   * ties in field_weight_value by sorting on nid ascending.
    *
    * @dataProvider userProvider
    */
