@@ -308,4 +308,197 @@ class IslandoraWorkbenchIntegrationNodeActionsControllerTest extends BrowserTest
     $this->assertEquals('Field storage configuration not found.', $content['error']);
   }
 
+  /**
+   * Test the entity bundle route for an invalid entity type.
+   *
+   * @dataProvider userProvider
+   */
+  public function testEntityBundleInvalidEntity(string $user): void {
+    $this->customLogin($user);
+    $this->drupalGet('/islandora_workbench_integration/node_actions/entity_field_bundle/nothing/invalid_bundle');
+    $this->assertSession()->statusCodeEquals(404);
+
+    $content = json_decode($this->getSession()->getPage()->getContent(), TRUE);
+
+    $this->assertArrayHasKey('error', $content);
+    $this->assertEquals('Entity type does not exist.', $content['error']);
+  }
+
+  /**
+   * Tests the entity bundle route for an invalid bundle.
+   *
+   * @dataProvider userProvider
+   */
+  public function testEntityBundleInvalidBundle(string $user): void {
+    $this->customLogin($user);
+    $this->drupalGet('/islandora_workbench_integration/node_actions/entity_field_bundle/node/invalid_bundle');
+    $this->assertSession()->statusCodeEquals(404);
+
+    $content = json_decode($this->getSession()->getPage()->getContent(), TRUE);
+
+    $this->assertArrayHasKey('error', $content);
+    $this->assertEquals('Bundle does not exist for the given entity type.', $content['error']);
+  }
+
+  /**
+   * Tests the entity bundle route for success.
+   *
+   * @dataProvider userProvider
+   */
+  public function testEntityBundleSuccess(string $user): void {
+    // Create test types.
+    NodeType::create([
+      'type' => 'test_bundle',
+      'name' => 'Test Bundle',
+    ])->save();
+    // Create field storage config first.
+    FieldStorageConfig::create([
+      'field_name' => 'field_test',
+      'entity_type' => 'node',
+      'type' => 'string',
+    ])->save();
+    FieldStorageConfig::create([
+      'field_name' => 'field_test2',
+      'entity_type' => 'node',
+      'type' => 'string',
+    ])->save();
+    // Then create field config.
+    FieldConfig::create([
+      'field_name' => 'field_test',
+      'entity_type' => 'node',
+      'bundle' => 'test_bundle',
+      'label' => 'Test Field',
+    ])->save();
+    FieldConfig::create([
+      'field_name' => 'field_test2',
+      'entity_type' => 'node',
+      'bundle' => 'test_bundle',
+      'label' => 'Test Field 2',
+    ])->save();
+
+    $this->customLogin($user);
+    $this->drupalGet('/islandora_workbench_integration/node_actions/entity_field_bundle/node/test_bundle');
+    $this->assertSession()->statusCodeEquals(200);
+
+    $content = json_decode($this->getSession()->getPage()->getContent(), TRUE);
+    $this->assertArrayHasKey('field_test', $content);
+    $this->assertArrayHasKey('field_test2', $content);
+    $this->assertArrayHasKey('config', $content['field_test']);
+    $this->assertArrayHasKey('config', $content['field_test2']);
+    $this->assertArrayHasKey('storage_config', $content['field_test']);
+    $this->assertArrayHasKey('storage_config', $content['field_test2']);
+  }
+
+  /**
+   * Tests that adding a new field to a bundle invalidates the cache.
+   *
+   * @dataProvider userProvider
+   */
+  public function testAddingBundleInvalidatesCache(string $user): void {
+    // Create test types.
+    NodeType::create([
+      'type' => 'test_bundle',
+      'name' => 'Test Bundle',
+    ])->save();
+    // Create field storage config first.
+    FieldStorageConfig::create([
+      'field_name' => 'field_test',
+      'entity_type' => 'node',
+      'type' => 'string',
+    ])->save();
+    // Then create field config.
+    FieldConfig::create([
+      'field_name' => 'field_test',
+      'entity_type' => 'node',
+      'bundle' => 'test_bundle',
+      'label' => 'Test Field',
+    ])->save();
+
+    $this->customLogin($user);
+    $this->drupalGet('/islandora_workbench_integration/node_actions/entity_field_bundle/node/test_bundle');
+    $this->assertSession()->statusCodeEquals(200);
+
+    $content = json_decode($this->getSession()->getPage()->getContent(), TRUE);
+    $this->assertArrayHasKey('field_test', $content);
+    $this->assertArrayNotHasKey('field_test_2', $content);
+
+    FieldStorageConfig::create([
+      'field_name' => 'field_test_2',
+      'entity_type' => 'node',
+      'type' => 'string',
+    ])->save();
+    FieldConfig::create([
+      'field_name' => 'field_test_2',
+      'entity_type' => 'node',
+      'bundle' => 'test_bundle',
+      'label' => 'Test Field 2',
+    ])->save();
+
+    $this->customLogin($user);
+    $this->drupalGet('/islandora_workbench_integration/node_actions/entity_field_bundle/node/test_bundle');
+    $this->assertSession()->statusCodeEquals(200);
+
+    $content = json_decode($this->getSession()->getPage()->getContent(), TRUE);
+    $this->assertArrayHasKey('field_test', $content);
+    $this->assertArrayHasKey('field_test_2', $content);
+  }
+
+  /**
+   * Tests that removing a field from a bundle invalidates the cache.
+   *
+   * @dataProvider userProvider
+   */
+  public function testRemovingFieldInvalidatesCache(string $user): void {
+    // Create test types.
+    NodeType::create([
+      'type' => 'test_bundle',
+      'name' => 'Test Bundle',
+    ])->save();
+    FieldStorageConfig::create([
+      'field_name' => 'field_test',
+      'entity_type' => 'node',
+      'type' => 'string',
+    ])->save();
+    FieldStorageConfig::create([
+      'field_name' => 'field_test_2',
+      'entity_type' => 'node',
+      'type' => 'string',
+    ])->save();
+    FieldConfig::create([
+      'field_name' => 'field_test',
+      'entity_type' => 'node',
+      'bundle' => 'test_bundle',
+      'label' => 'Test Field',
+    ])->save();
+    FieldConfig::create([
+      'field_name' => 'field_test_2',
+      'entity_type' => 'node',
+      'bundle' => 'test_bundle',
+      'label' => 'Test Field 2',
+    ])->save();
+
+    $this->customLogin($user);
+    $this->drupalGet('/islandora_workbench_integration/node_actions/entity_field_bundle/node/test_bundle');
+    $this->assertSession()->statusCodeEquals(200);
+
+    $content = json_decode($this->getSession()->getPage()->getContent(), TRUE);
+    $this->assertArrayHasKey('field_test', $content);
+    $this->assertArrayHasKey('field_test_2', $content);
+
+    $entityFieldManager = \Drupal::service('entity_field.manager');
+    $fields = $entityFieldManager->getFieldDefinitions('node', 'test_bundle');
+
+    if (isset($fields['field_test_2'])) {
+      $fields['field_test_2']->delete();
+    }
+
+    $this->customLogin($user);
+    $this->drupalGet('/islandora_workbench_integration/node_actions/entity_field_bundle/node/test_bundle');
+    $this->assertSession()->statusCodeEquals(200);
+
+    $content = json_decode($this->getSession()->getPage()->getContent(), TRUE);
+    $this->assertArrayHasKey('field_test', $content);
+    $this->assertArrayNotHasKey('field_test_2', $content);
+  }
+
 }
