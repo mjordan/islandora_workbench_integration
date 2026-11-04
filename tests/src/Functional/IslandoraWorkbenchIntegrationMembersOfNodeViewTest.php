@@ -2,8 +2,8 @@
 
 namespace Drupal\Tests\islandora_workbench_integration\Functional;
 
+use Drupal\Core\Config\FileStorage;
 use Drupal\Tests\BrowserTestBase;
-use Drupal\Tests\field\Traits\EntityReferenceTestTrait;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
 use Drupal\node\Entity\Node;
@@ -23,8 +23,6 @@ use Drupal\user\Entity\User;
  * @group islandora_workbench_integration
  */
 class IslandoraWorkbenchIntegrationMembersOfNodeViewTest extends BrowserTestBase {
-
-  use EntityReferenceTestTrait;
 
   /**
    * {@inheritdoc}
@@ -89,13 +87,22 @@ class IslandoraWorkbenchIntegrationMembersOfNodeViewTest extends BrowserTestBase
     }
 
     if (!FieldStorageConfig::loadByName('node', 'field_member_of')) {
-      $this->createEntityReferenceField(
-        'node',
-        'islandora_object',
-        'field_member_of',
-        'Member Of',
-        'node'
-      );
+      FieldStorageConfig::create([
+        'field_name' => 'field_member_of',
+        'entity_type' => 'node',
+        'type' => 'entity_reference',
+        'settings' => ['target_type' => 'node'],
+      ])->save();
+      FieldConfig::create([
+        'field_name' => 'field_member_of',
+        'entity_type' => 'node',
+        'bundle' => 'islandora_object',
+        'label' => 'Member Of',
+        'settings' => [
+          'handler' => 'default',
+          'handler_settings' => [],
+        ],
+      ])->save();
     }
 
     if (!FieldStorageConfig::loadByName('node', 'field_weight')) {
@@ -111,6 +118,18 @@ class IslandoraWorkbenchIntegrationMembersOfNodeViewTest extends BrowserTestBase
         'label' => 'Weight',
       ])->save();
     }
+
+    // Drupal only auto-imports config/optional entries whose declared
+    // dependencies are already satisfied at the moment a module is
+    // installed. Module installation (triggered by the static $modules
+    // property above) happens inside parent::setUp(), before the field
+    // creation above — so at that point, members_of_node's declared
+    // config dependencies (field.storage.node.field_weight and
+    // field.storage.node.field_member_of) don't exist yet, and Drupal
+    // correctly skips auto-installing the View. Import it explicitly
+    // here, now that its dependencies exist, rather than relying on
+    // that auto-import timing.
+    $this->installMembersOfNodeView();
 
     Role::create([
       'id' => 'workbench_user',
@@ -140,6 +159,44 @@ class IslandoraWorkbenchIntegrationMembersOfNodeViewTest extends BrowserTestBase
   }
 
   /**
+   * Explicitly imports the members_of_node View, if not already present.
+   *
+   * Mirrors the approach used in islandora_workbench_integration.install's
+   * hook_update_N(), rather than relying on Drupal's config/optional
+   * auto-import, whose dependency-satisfaction check runs too early in a
+   * test's bootstrap for this View specifically — see the comment at its
+   * call site in setUp() for why.
+   */
+  protected function installMembersOfNodeView(): void {
+    $view_id = 'members_of_node';
+    $view_storage = \Drupal::entityTypeManager()->getStorage('view');
+
+    if ($view_storage->load($view_id)) {
+      return;
+    }
+
+    $config_path = \Drupal::service('extension.list.module')
+      ->getPath('islandora_workbench_integration') . '/config/optional';
+    $file_storage = new FileStorage($config_path);
+    $data = $file_storage->read('views.view.' . $view_id);
+
+    if ($data === FALSE) {
+      throw new \RuntimeException(sprintf(
+        'Could not read views.view.%s.yml from %s.',
+        $view_id,
+        $config_path
+      ));
+    }
+
+    $view_storage->createFromStorageRecord($data)->save();
+
+    // The rest_export_1 display's path is only registered as a route on
+    // a router rebuild; without this, the View entity exists but its
+    // endpoint still 404s.
+    \Drupal::service('router.builder')->rebuild();
+  }
+
+  /**
    * Data provider that returns an array of arguments for testing.
    *
    * Covers all three ways in to this View given its multiple_permissions
@@ -151,7 +208,7 @@ class IslandoraWorkbenchIntegrationMembersOfNodeViewTest extends BrowserTestBase
    * @return array
    *   An array of arrays, each containing arguments for the tests.
    */
-  public function userProvider() {
+  public static function userProvider() {
     return [
       ['root'],
       ['test_user'],
@@ -247,7 +304,7 @@ class IslandoraWorkbenchIntegrationMembersOfNodeViewTest extends BrowserTestBase
 
     $returnedNids = array_column($body, 'nid');
     $this->assertSame(
-      [$childA->id(), $childB->id(), $childC->id()],
+      array_map('intval', [$childA->id(), $childB->id(), $childC->id()]),
       array_map('intval', $returnedNids),
       'Members should be returned ordered by field_weight ascending, not by creation order.'
     );
@@ -284,7 +341,7 @@ class IslandoraWorkbenchIntegrationMembersOfNodeViewTest extends BrowserTestBase
     $body = $this->getJsonResponse();
     $returnedNids = array_map('intval', array_column($body, 'nid'));
     $this->assertSame(
-      [$childTieFirst->id(), $childTieSecond->id(), $childHeaviest->id()],
+      array_map('intval', [$childTieFirst->id(), $childTieSecond->id(), $childHeaviest->id()]),
       $returnedNids,
       'Members with equal field_weight should be ordered by nid ascending as the tie-break, before members with a strictly greater weight.'
     );
@@ -339,7 +396,7 @@ class IslandoraWorkbenchIntegrationMembersOfNodeViewTest extends BrowserTestBase
 
     $body = $this->getJsonResponse();
     $this->assertCount(1, $body, 'Only the islandora_object-bundle child should be returned.');
-    $this->assertSame($matchingChild->id(), (int) $body[0]['nid']);
+    $this->assertSame((int) $matchingChild->id(), (int) $body[0]['nid']);
   }
 
   /**
@@ -370,13 +427,22 @@ class IslandoraWorkbenchIntegrationMembersOfNodeViewTest extends BrowserTestBase
    *
    * Anonymous has neither 'use islandora workbench' nor 'administer
    * nodes', so both arms of the multiple_permissions OR should fail.
+   *
+   * The expected status is 401, not 403. The rest_export_1 display's
+   * auth option includes basic_auth, and when access is denied with no
+   * credentials at all on the request, core's AuthenticationSubscriber
+   * asks basic_auth's provider to send a challenge instead of leaving
+   * the plain 403 in place, per
+   * \Drupal\basic_auth\Authentication\Provider\BasicAuth::challengeException().
+   * This is the same behavior core's own BasicAuthTest asserts for an
+   * unauthenticated request against a basic_auth-only route.
    */
   public function testMembersOfNodeRequiresPermission(): void {
     $parent = $this->createMemberNode('Parent object', NULL, 0);
     $this->drupalGet('islandora_workbench_integration/members-of-node/' . $parent->id(), [
       'query' => ['_format' => 'json'],
     ]);
-    $this->assertSession()->statusCodeEquals(403);
+    $this->assertSession()->statusCodeEquals(401);
   }
 
 }
